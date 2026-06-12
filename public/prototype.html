@@ -1,0 +1,496 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fleet Quality Hub — prototype</title>
+<style>
+  :root{
+    --canvas:#FAFAF7; --surface:#FFFFFF; --primary:#2D6CF6; --primary-weak:#EEF3FE;
+    --ink:#1A2332; --t2:#5B6472; --t3:#8A93A2; --border:#E6E9EF;
+    --ok-bg:#E7F5EC; --ok:#1E7D45; --warn-bg:#FCF3E2; --warn:#B9770E;
+    --dng-bg:#FBEAE8; --dng:#C0392B; --info-bg:#EEF3FE; --info:#2D6CF6;
+    --r:8px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;height:100%;}
+  body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--canvas);color:var(--ink);font-size:14px;line-height:1.5;
+    font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased;}
+  /* app shell */
+  .app{display:grid;grid-template-columns:240px 1fr;grid-template-rows:64px 1fr;height:100vh;
+    grid-template-areas:"brand header" "side main";}
+  .brand{grid-area:brand;display:flex;align-items:center;gap:10px;padding:0 18px;
+    border-bottom:1px solid var(--border);border-right:1px solid var(--border);background:var(--surface);}
+  .brand .logo{width:26px;height:26px;border-radius:50%;display:block;flex:none;}
+  .brand .name{font-weight:600;font-size:15px;}
+  .header{grid-area:header;display:flex;align-items:center;justify-content:space-between;
+    padding:0 24px;border-bottom:1px solid var(--border);background:var(--surface);}
+  .header .crumb{color:var(--t2);font-size:13px;}
+  .header .crumb b{color:var(--ink);font-weight:600;}
+  .header .right{display:flex;align-items:center;gap:14px;}
+  .pill-role{font-size:12px;color:var(--t2);border:1px solid var(--border);border-radius:var(--r);padding:4px 10px;}
+  .avatar{width:28px;height:28px;border-radius:50%;background:var(--primary-weak);color:var(--primary);
+    display:grid;place-items:center;font-size:12px;font-weight:600;}
+  .side{grid-area:side;border-right:1px solid var(--border);background:var(--surface);overflow-y:auto;padding:14px 10px;}
+  .grp{font-size:11px;letter-spacing:.04em;color:var(--t3);text-transform:uppercase;
+    padding:14px 10px 6px;font-weight:600;}
+  .nav{display:flex;align-items:center;gap:10px;width:100%;border:0;background:transparent;cursor:pointer;
+    text-align:left;color:var(--t2);font-size:13.5px;padding:8px 10px;border-radius:var(--r);font-family:inherit;}
+  .nav:hover{background:var(--canvas);}
+  .nav.active{background:var(--primary-weak);color:var(--primary);font-weight:600;}
+  .nav svg{width:16px;height:16px;flex:none;}
+  .nav .count{margin-left:auto;font-size:11px;background:var(--canvas);color:var(--t2);border-radius:20px;padding:1px 8px;}
+  .nav.active .count{background:#fff;color:var(--primary);}
+  .nav .dot{margin-left:auto;width:7px;height:7px;border-radius:50%;background:var(--dng);}
+  .main{grid-area:main;overflow-y:auto;padding:24px 28px 60px;background:var(--surface);}
+  .screen{display:none;max-width:1080px;}
+  .screen.show{display:block;}
+  h1.title{font-size:22px;font-weight:600;margin:0 0 2px;}
+  .sub{color:var(--t2);font-size:13.5px;margin:0 0 20px;}
+  /* cards / kpi */
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:20px;}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px;}
+  .kpi .lbl{font-size:12.5px;color:var(--t2);margin-bottom:6px;}
+  .kpi .val{font-size:24px;font-weight:600;line-height:1.1;}
+  .kpi .val small{font-size:12px;font-weight:400;color:var(--t3);}
+  .kpi .val.dng{color:var(--dng);} .kpi .val.warn{color:var(--warn);} .kpi .val.ok{color:var(--ok);}
+  .banner{display:flex;gap:10px;align-items:flex-start;border-radius:var(--r);padding:12px 14px;font-size:13px;margin-bottom:18px;}
+  .banner.dng{background:var(--dng-bg);color:var(--dng);} .banner.info{background:var(--info-bg);color:var(--info);}
+  .banner b{font-weight:600;}
+  .sec-h{font-size:13px;font-weight:600;color:var(--ink);margin:22px 0 10px;}
+  /* table */
+  table{width:100%;border-collapse:collapse;font-size:13px;background:var(--surface);
+    border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
+  thead th{text-align:left;font-weight:600;color:var(--t2);font-size:12px;padding:10px 12px;
+    border-bottom:1px solid var(--border);background:#FCFCFB;}
+  tbody td{padding:11px 12px;border-bottom:1px solid var(--border);vertical-align:top;}
+  tbody tr:last-child td{border-bottom:0;}
+  .tpl-row td{background:#FCFCFB;font-weight:600;cursor:pointer;}
+  .tpl-row .chev{color:var(--t3);font-weight:400;}
+  .muted{color:var(--t3);}
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;}
+  /* chips */
+  .chip{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11.5px;font-weight:500;white-space:nowrap;}
+  .c-ok{background:var(--ok-bg);color:var(--ok);} .c-warn{background:var(--warn-bg);color:var(--warn);}
+  .c-dng{background:var(--dng-bg);color:var(--dng);} .c-info{background:var(--info-bg);color:var(--info);}
+  .c-grey{background:var(--canvas);color:var(--t2);border:1px solid var(--border);}
+  .sev{font-weight:600;font-size:12px;} .sev.p0{color:var(--dng);} .sev.p1{color:var(--warn);} .sev.p2{color:var(--ok);}
+  .methods{display:flex;gap:6px;flex-wrap:wrap;}
+  /* filters / buttons */
+  .filters{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px;}
+  .btn{font-family:inherit;font-size:12.5px;color:var(--t2);background:var(--surface);
+    border:1px solid var(--border);border-radius:var(--r);padding:6px 12px;cursor:pointer;}
+  .btn.active{background:var(--primary);color:#fff;border-color:var(--primary);}
+  .btn-pri{background:var(--primary);color:#fff;border-color:var(--primary);}
+  /* timeline */
+  .step{display:grid;grid-template-columns:150px 1fr;gap:16px;padding:16px 0;border-bottom:1px solid var(--border);}
+  .step:last-child{border-bottom:0;}
+  .shot{height:96px;border-radius:6px;border:1px solid var(--border);background:
+    repeating-linear-gradient(45deg,#F3F5F9 0 8px,#FAFBFD 8px 16px);display:grid;place-items:center;
+    color:var(--t3);font-size:11px;text-align:center;padding:6px;}
+  .step .act{font-weight:600;margin-bottom:6px;}
+  .kv{font-size:12.5px;color:var(--t2);margin:2px 0;}
+  .kv b{color:var(--ink);font-weight:600;}
+  .tag{display:inline-block;font-size:11px;padding:1px 7px;border-radius:6px;background:var(--canvas);color:var(--t2);border:1px solid var(--border);margin-left:6px;}
+  .task-card{display:grid;grid-template-columns:1fr 220px;gap:18px;}
+  ul.done{margin:6px 0 0;padding-left:18px;} ul.done li{margin:3px 0;color:var(--t2);font-size:12.5px;}
+  .ownerbox .row{display:flex;justify-content:space-between;font-size:12.5px;padding:4px 0;border-bottom:1px solid var(--border);}
+  .ownerbox .row:last-child{border-bottom:0;}
+  .ownerbox .row span:first-child{color:var(--t2);}
+  .legend{font-size:11.5px;color:var(--t3);margin-top:10px;}
+  a.lnk{color:var(--primary);text-decoration:none;}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="brand"><svg class="logo" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Alyson QA Agent">
+      <circle cx="32" cy="32" r="32" fill="#F5A623"/>
+      <circle cx="32" cy="32" r="26.5" fill="#F2F1EC"/>
+      <clipPath id="brandClip"><circle cx="32" cy="32" r="26.5"/></clipPath>
+      <g clip-path="url(#brandClip)">
+        <path d="M15 32 C13 16 51 16 49 32 C50 46 47 60 47 64 L17 64 C17 60 14 46 15 32 Z" fill="#141342"/>
+        <rect x="26" y="39" width="12" height="13" fill="#F0BB9B"/>
+        <path d="M15 64 C16 52 24 49 32 49 C40 49 48 52 49 64 Z" fill="#F5A623"/>
+        <path d="M21 26 C21 16 43 16 43 26 L43 35 C43 45 37 49 32 49 C27 49 21 45 21 35 Z" fill="#F7D7BE"/>
+        <path d="M21 27 C19 33 19 44 23 51 L16.5 50 C13 40 13.5 28 19 23 Z" fill="#141342"/>
+        <path d="M20 27 C21 17 43 17 44 27 C39 21 25 21 20 27 Z" fill="#141342"/>
+        <path d="M23 26.5 q3 -2 6 -0.3" stroke="#141342" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        <path d="M35 26 q3 -1.5 5 0.2" stroke="#141342" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        <circle cx="27" cy="31" r="4.7" fill="#5B9BE0"/>
+        <circle cx="38.5" cy="31" r="4.7" fill="#5B9BE0"/>
+        <circle cx="28" cy="31" r="1.5" fill="#1B2A52"/>
+        <circle cx="39.5" cy="31" r="1.5" fill="#1B2A52"/>
+        <circle cx="27" cy="31" r="4.7" fill="none" stroke="#2A2A66" stroke-width="1.7"/>
+        <circle cx="38.5" cy="31" r="4.7" fill="none" stroke="#2A2A66" stroke-width="1.7"/>
+        <path d="M31.7 30.6 h3" stroke="#2A2A66" stroke-width="1.7"/>
+        <path d="M31.5 33 q-1 3 0.6 4" stroke="#E0A98C" stroke-width="1" fill="none" stroke-linecap="round"/>
+        <path d="M28 39 q4 3.5 8 0 q-4 1.5 -8 0 Z" fill="#fff"/>
+        <path d="M28 39 q4 3.5 8 0" fill="none" stroke="#B65C5C" stroke-width="1.3" stroke-linecap="round"/>
+      </g>
+    </svg><div class="name">Alyson QA Agent</div></div>
+  <div class="header">
+    <div class="crumb" id="crumb"><b>Overview</b> · Dashboard</div>
+    <div class="right">
+      <span class="pill-role">Admin · whole fleet</span>
+      <div class="avatar">UZ</div>
+    </div>
+  </div>
+
+  <nav class="side" id="side">
+    <div class="grp">Overview</div>
+    <button class="nav active" data-s="dash"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Dashboard</span></button>
+    <div class="grp">Pages</div>
+    <button class="nav" data-s="pages"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 22 8.5 12 15 2 8.5 12 2"/><polyline points="2 15.5 12 22 22 15.5"/></svg><span>Pages</span><span class="count">1 run</span></button>
+    <button class="nav" data-s="templates"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><span>Templates</span></button>
+    <div class="grp">Quality</div>
+    <button class="nav" data-s="runs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="6 3 20 12 6 21 6 3"/></svg><span>QA runs</span><span class="count">1</span></button>
+    <button class="nav" data-s="findings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12" y2="17"/></svg><span>Findings</span><span class="count">11</span></button>
+    <button class="nav" data-s="alerts"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span>Alerts</span><span class="dot"></span></button>
+    <div class="grp">Work</div>
+    <button class="nav" data-s="tasks"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg><span>Tasks</span><span class="count">3</span></button>
+    <div class="grp">Analytics</div>
+    <button class="nav" data-s="reports"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span>Reports</span></button>
+    <div class="grp">Data</div>
+    <button class="nav" data-s="na"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/></svg><span>Sources</span></button>
+    <div class="grp">Experimentation</div>
+    <button class="nav" data-s="na"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 1.7 3h10.6a2 2 0 0 0 1.7-3l-5-9V3"/></svg><span>Experiments</span></button>
+    <div class="grp">Settings</div>
+    <button class="nav" data-s="settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-2.82 1.17V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 8 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 3.6 14H3.5a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 5 8.6a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 3.6h.09A1.65 1.65 0 0 0 12 2.6a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 2.82 1.17l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 20.4 9v.09a2 2 0 0 1 0 4z"/></svg><span>Settings</span></button>
+  </nav>
+
+  <main class="main">
+
+    <!-- DASHBOARD -->
+    <section class="screen show" id="dash">
+      <h1 class="title">Fleet health</h1>
+      <p class="sub">Real data from the one page run so far. Everything else shows a true empty state — no invented findings.</p>
+      <div class="kpis">
+        <div class="card kpi"><div class="lbl">Pages run</div><div class="val">1 <small>/ fleet not yet swept</small></div></div>
+        <div class="card kpi"><div class="lbl">Deploy-ready</div><div class="val dng">0%</div></div>
+        <div class="card kpi"><div class="lbl">Open P0</div><div class="val dng">2</div></div>
+        <div class="card kpi"><div class="lbl">Human tasks</div><div class="val warn">3</div></div>
+        <div class="card kpi"><div class="lbl">Auto-fixes verified</div><div class="val ok">6</div></div>
+      </div>
+      <div class="banner dng"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex:none;margin-top:1px"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12" y2="17"/></svg><div><b>Deployment gap.</b> The 6 auto-fixes are verified in a PR but not yet deployed — the live page still leaks PII into the HomeLight redirect and runs a third-party session recorder. Fastest risk reduction is shipping the existing fix, not more engineering.</div></div>
+      <div class="sec-h">Template health</div>
+      <table>
+        <thead><tr><th style="width:30%">Template</th><th>Pages</th><th>Status</th><th>Shared open findings</th></tr></thead>
+        <tbody>
+          <tr><td>value-estimator</td><td>1 run</td><td><span class="chip c-warn">Needs human</span></td><td>3 template-level (HomeLight, consent, CSP) — fix once → clears all on this template</td></tr>
+          <tr><td class="muted">cash-offer</td><td class="muted">0 run</td><td><span class="chip c-grey">Not yet run</span></td><td class="muted">—</td></tr>
+          <tr><td class="muted">report-optin</td><td class="muted">0 run</td><td><span class="chip c-grey">Not yet run</span></td><td class="muted">—</td></tr>
+          <tr><td class="muted">calculator</td><td class="muted">0 run</td><td><span class="chip c-grey">Not yet run</span></td><td class="muted">—</td></tr>
+        </tbody>
+      </table>
+      <div class="sec-h">Recent runs</div>
+      <table>
+        <thead><tr><th style="width:40%">Run</th><th>Tier</th><th>Methods</th><th>Result</th></tr></thead>
+        <tbody>
+          <tr><td><a class="lnk" href="#" data-go="runs">2026-06-12-value-estimator-001</a></td>
+            <td><span class="chip c-info">T0 read-only</span></td>
+            <td class="muted">AI review · live-DOM · network · console</td>
+            <td><span class="chip c-dng">2 P0 · 2 P1 · 2 P2</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- PAGES -->
+    <section class="screen" id="pages">
+      <h1 class="title">Pages — the fleet</h1>
+      <p class="sub">Grouped by template. Per-page is a drill-in, not the default. Only run pages show results; the rest are honest "not yet run" rows.</p>
+      <div class="card" style="display:flex;gap:10px;align-items:center;margin-bottom:16px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:240px;">
+          <div style="font-weight:600;font-size:13px;">Add a page to QA</div>
+          <div class="kv" style="margin-top:2px;color:var(--t2);">Pages normally arrive automatically from the deploy webhook (Settings → Triggers). Use this only for an ad-hoc on-demand run.</div>
+        </div>
+        <input type="text" placeholder="https://…/page-slug" style="flex:1;min-width:220px;height:36px;border:1px solid var(--border);border-radius:var(--r);padding:0 12px;font-family:inherit;font-size:13px;color:var(--ink);background:var(--surface);">
+        <button class="btn btn-pri">Queue a run</button>
+      </div>
+      <table>
+        <thead><tr><th style="width:34%">Page</th><th>Template</th><th>Score</th><th>Methods</th><th>Open</th><th>Deploy-ready</th></tr></thead>
+        <tbody>
+          <tr class="tpl-row" data-tpl="ve"><td colspan="6"><span class="chev">▾</span> value-estimator · 1 page run · <span class="chip c-warn" style="margin-left:6px">Needs human</span></td></tr>
+          <tr data-tpl="ve">
+            <td>new-simple-address-value-estimator2025 <span class="chip c-info">reviewed</span></td>
+            <td class="muted">value-estimator</td><td><b style="color:var(--warn)">68</b></td>
+            <td><div class="methods">
+              <span class="chip c-ok">AI ✓</span><span class="chip c-ok">DOM ✓</span><span class="chip c-dng">Net ✗</span><span class="chip c-warn">Attr !</span><span class="chip c-grey">Schema –</span><span class="chip c-grey">API –</span>
+            </div></td>
+            <td><span style="color:var(--dng)">6</span></td>
+            <td><span class="chip c-dng">No · 2 P0</span></td>
+          </tr>
+          <tr class="tpl-row"><td colspan="6"><span class="chev">▸</span> cash-offer · <span class="muted">0 run</span> <span class="chip c-grey" style="margin-left:6px">Not yet run</span></td></tr>
+          <tr class="tpl-row"><td colspan="6"><span class="chev">▸</span> report-optin · <span class="muted">0 run</span> <span class="chip c-grey" style="margin-left:6px">Not yet run</span></td></tr>
+        </tbody>
+      </table>
+      <p class="legend">Method chips: AI review · live-DOM · Network · Attribution · Schema · API. ✓ pass · ✗ fail · ! warning · – not run.</p>
+    </section>
+
+    <!-- TEMPLATES -->
+    <section class="screen" id="templates">
+      <h1 class="title">Templates</h1>
+      <p class="sub">Fix once → propagate. A template-level fix fans out to every page on the template and re-verifies each.</p>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;">
+          <div><b>value-estimator</b> <span class="chip c-warn" style="margin-left:6px">3 template-level tasks</span></div>
+          <button class="btn btn-pri">Fix once → re-verify all</button>
+        </div>
+        <p class="kv" style="margin-top:10px">The three human-gated items (HomeLight handoff, consent_status, CSP enforcement) are template-level: resolving them at the template clears every page generated from it, then re-runs QA on each. Shown honestly with re-verification, never as a label.</p>
+      </div>
+    </section>
+
+    <!-- QA RUNS -->
+    <section class="screen" id="runs">
+      <h1 class="title">QA run · 2026-06-12-value-estimator-001</h1>
+      <p class="sub">new-simple-address-value-estimator2025 · production · <span class="chip c-info">T0 read-only</span> · the proven artifact: action → screenshot → network → console, PII redacted.</p>
+      <div class="kpis">
+        <div class="card kpi"><div class="lbl">Tier</div><div class="val" style="font-size:18px">T0 · read-only</div></div>
+        <div class="card kpi"><div class="lbl">Methods</div><div class="val" style="font-size:14px;font-weight:500">AI review · live-DOM · network · console · source</div></div>
+        <div class="card kpi"><div class="lbl">Findings</div><div class="val dng" style="font-size:18px">2 P0 · 2 P1 · 2 P2</div></div>
+        <div class="card kpi"><div class="lbl">Deploy-ready</div><div class="val dng" style="font-size:18px">false</div></div>
+      </div>
+      <div class="sec-h">Timeline (timeline.md / run.json)</div>
+      <div class="card">
+        <div class="step"><div class="shot">01 · landing</div><div>
+          <div class="act">Step 01 — Navigate to page</div>
+          <div class="kv"><b>Network:</b> trackers fire immediately — GA, LeadiD, Segment, Inspectlet</div>
+          <div class="kv"><b>Console:</b> errors already streaming</div>
+          <div class="kv"><b>Finding:</b> <span class="sev p1">F3</span> no consent banner while trackers capture</div>
+        </div></div>
+        <div class="step"><div class="shot">02 · DOM</div><div>
+          <div class="act">Step 02 — Read rendered DOM / components</div>
+          <div class="kv"><b>Present:</b> hero, address input, "Get estimate" CTA, As-Seen-On-TV badge</div>
+          <div class="kv"><b>Stack:</b> jQuery + 21 scripts (434KB) — no React/TS/Zod<span class="tag">F6 · P2</span></div>
+        </div></div>
+        <div class="step"><div class="shot">03 · network</div><div>
+          <div class="act">Step 03 — Capture network (13 requests)</div>
+          <div class="kv"><b>Inspectlet</b> POSTs form-field data to hn.inspectlet.com/pdata<span class="tag">F2 · P0</span></div>
+          <div class="kv">utm_content == sessionId (same UUID)<span class="tag">F5 · P2</span></div>
+        </div></div>
+        <div class="step"><div class="shot">04 · console</div><div>
+          <div class="act">Step 04 — Capture console (939 messages)</div>
+          <div class="kv">Repeating <span class="mono">TypeError … .apply is not a function</span> at home-value-estimator.js<span class="tag">F4 · P1</span></div>
+        </div></div>
+        <div class="step"><div class="shot">05 · source</div><div>
+          <div class="act">Step 05 — Inspect source for redirect (no submit)</div>
+          <div class="kv">home-value-estimator.js: homelight ×14, encodeURIComponent ×11, base64; query built with <span class="mono">&e=&lt;base64 email&gt;&n=&lt;base64 name&gt;</span><span class="tag">F1 · P0</span></div>
+          <div class="kv muted">Evidence quotes structure, not decoded values. No form submitted on production.</div>
+        </div></div>
+      </div>
+    </section>
+
+    <!-- FINDINGS -->
+    <section class="screen" id="findings">
+      <h1 class="title">Findings</h1>
+      <p class="sub">Every real issue from the run + source review. Resolution is proven, never asserted — "auto-fixed" shows only after re-QA passes; here those fixes are in a PR awaiting deploy.</p>
+      <div class="filters" id="fFilters">
+        <button class="btn active" data-f="all">All 11</button>
+        <button class="btn" data-f="p0">P0</button>
+        <button class="btn" data-f="open">Open on live</button>
+        <button class="btn" data-f="fixed">Auto-fixed (PR)</button>
+        <button class="btn" data-f="gated">Human-gated</button>
+      </div>
+      <table><thead><tr><th>Sev</th><th>Dimension</th><th style="width:38%">Finding</th><th>Resolution</th><th>Owner</th></tr></thead>
+      <tbody id="fRows"></tbody></table>
+    </section>
+
+    <!-- ALERTS -->
+    <section class="screen" id="alerts">
+      <h1 class="title">Alerts</h1>
+      <p class="sub">Needs attention now — distinct from the Findings archive. New P0s and run failures also email the assigned owner.</p>
+      <div class="banner dng"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex:none;margin-top:1px"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12" y2="17"/></svg><div><b>P0 · live · PII in redirect URL.</b> Name + email base64-encoded into the HomeLight redirect on production. <a class="lnk" href="#" data-go="tasks">Open TASK-1 →</a></div></div>
+      <div class="banner dng"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex:none;margin-top:1px"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12" y2="17"/></svg><div><b>P0 · live · session recorder capturing form data.</b> Inspectlet POSTs field values pre-consent. <a class="lnk" href="#" data-go="tasks">Open TASK-2 →</a></div></div>
+      <div class="banner info"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex:none;margin-top:1px"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><div><b>Deployment gap.</b> 6 auto-fixes verified in PR, not deployed — live page unchanged since June 10. Acknowledge or convert to a deploy task.</div></div>
+    </section>
+
+    <!-- TASKS -->
+    <section class="screen" id="tasks">
+      <h1 class="title">Tasks — human queue</h1>
+      <p class="sub">Only what the agent can't safely resolve. One person, one task; auto-routed by area; resolving a task auto-triggers a re-QA. Separate from Pages.</p>
+      <div class="card" style="margin-bottom:14px"><div class="task-card">
+        <div>
+          <div><span class="sev p0">P0</span> &nbsp;<b>TASK-1 — HomeLight handoff: close the PII leak + IDOR</b></div>
+          <p class="kv" style="margin-top:6px">Define a safe server-to-server handoff so PII never sits in URL params, and confirm a cookie_id can only resolve its own lead.</p>
+          <b style="font-size:12.5px">Done when</b>
+          <ul class="done">
+            <li>Documented handoff method with no PII in URL params</li>
+            <li>Authorization check confirmed (no cross-lead IDOR)</li>
+            <li>cookie_id retention window defined</li>
+            <li>HomeLight credentials in the vault; agreement owner named</li>
+          </ul>
+        </div>
+        <div class="card ownerbox" style="height:fit-content">
+          <div class="row"><span>Owner</span><b>Backend / Integrations</b></div>
+          <div class="row"><span>Area</span><span class="chip c-info">backend</span></div>
+          <div class="row"><span>Blocks</span><span>Autonomous sign-off</span></div>
+          <div class="row"><span>On resolve</span><span>auto re-QA</span></div>
+        </div>
+      </div></div>
+      <div class="card" style="margin-bottom:14px"><div class="task-card">
+        <div>
+          <div><span class="sev p0">P0</span> &nbsp;<b>TASK-2 — consent_status: define & wire TCPA/CCPA logic</b></div>
+          <p class="kv" style="margin-top:6px">Consent is commented out; hardcoding it true must never ship. Need the signed-off valid-consent rule and destination field.</p>
+          <b style="font-size:12.5px">Done when</b>
+          <ul class="done">
+            <li>Written definition of valid consent agreed with legal</li>
+            <li>consent_status computed from real input — never hardcoded</li>
+            <li>Destination field + endpoint documented and wired</li>
+            <li>Named legal owner signs off on disclosure language</li>
+          </ul>
+        </div>
+        <div class="card ownerbox" style="height:fit-content">
+          <div class="row"><span>Owner</span><b>Frontend + Legal</b></div>
+          <div class="row"><span>Area</span><span class="chip c-warn">legal</span></div>
+          <div class="row"><span>Blocks</span><span>Any prod submit</span></div>
+          <div class="row"><span>On resolve</span><span>auto re-QA</span></div>
+        </div>
+      </div></div>
+      <div class="card"><div class="task-card">
+        <div>
+          <div><span class="sev p1">P1</span> &nbsp;<b>TASK-3 — CSP enforcement: define policy and lock down</b></div>
+          <p class="kv" style="margin-top:6px">CSP is report-only; enforcing needs a human-confirmed allowlist so it doesn't break the funnel.</p>
+          <b style="font-size:12.5px">Done when</b>
+          <ul class="done">
+            <li>Complete origin allowlist documented per directive</li>
+            <li>Decision on unsafe-inline (nonces/hashes) and unsafe-eval</li>
+            <li>Violation-report endpoint configured</li>
+            <li>Enforced CSP validated against staging + prod origins</li>
+          </ul>
+        </div>
+        <div class="card ownerbox" style="height:fit-content">
+          <div class="row"><span>Owner</span><b>Frontend / Security</b></div>
+          <div class="row"><span>Area</span><span class="chip c-info">security</span></div>
+          <div class="row"><span>Blocks</span><span>Hardening sign-off</span></div>
+          <div class="row"><span>On resolve</span><span>auto re-QA</span></div>
+        </div>
+      </div></div>
+    </section>
+
+    <!-- REPORTS / NA -->
+    <section class="screen" id="reports"><h1 class="title">Reports</h1><p class="sub">Fleet rollups and trends. Empty until more pages are run — no invented data.</p><div class="card muted">No data yet. Run a fleet sweep to populate reports.</div></section>
+
+    <!-- SETTINGS -->
+    <section class="screen" id="settings">
+      <h1 class="title">Triggers & roles</h1>
+      <p class="sub">How a run starts on its own, and who hears about it. This is what turns on-demand QA into autonomous-on-deploy QA.</p>
+
+      <div class="sec-h">Triggers — the deploy webhook</div>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;">
+          <div><b>Post-deploy webhook</b> <span class="chip c-grey" style="margin-left:6px">Not connected</span></div>
+          <button class="btn btn-pri">Connect app.alyson.ai</button>
+        </div>
+        <p class="kv" style="margin-top:10px;color:var(--t2)">When connected, app.alyson.ai fires an event the moment a page deploys and a run is enqueued automatically — no human in the loop. Requires: a signed endpoint, pipeline access to register the hook, an HMAC secret, the trigger contract below, and an idempotency key.</p>
+        <div class="ownerbox" style="margin-top:10px">
+          <div class="row"><span>Endpoint</span><b>POST /hooks/deploy</b></div>
+          <div class="row"><span>Signing secret (HMAC)</span><b style="color:var(--warn)">Not set</b></div>
+          <div class="row"><span>Last event received</span><b class="muted">—</b></div>
+          <div class="row"><span>Idempotency key</span><b>deploy_id</b></div>
+        </div>
+        <p class="kv" style="margin-top:12px;font-weight:600">Trigger contract (deploy-event payload)</p>
+        <pre style="margin:6px 0 0;padding:12px;background:var(--canvas);border:1px solid var(--border);border-radius:var(--r);font-size:12px;overflow:auto;color:var(--t2)">event:        "page.deployed"
+page_url:     "https://…/&lt;slug&gt;"
+environment:  "staging" | "production"   → selects tier (prod: T0/T1 · staging: up to T2)
+template_id:  "value-estimator"          → fan-out + owner fallback
+deploy_id:    "rel_… / commit SHA"       → idempotency + audit
+owner:        { id, email }              → drives notification routing
+timestamp:    ISO-8601
+signature:    HMAC over the body         → authenticity</pre>
+        <p class="legend">Status: demand-only today. The contract is the single missing piece for "QA starts itself." Auto-fix + routing still need repo/PR, vault, and alerting grants. Production deploy stays human-gated by design.</p>
+      </div>
+
+      <div class="card" style="margin-top:12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+        <div style="flex:1;min-width:240px;"><b style="font-size:13px">Manual run (on-demand path)</b><div class="kv" style="color:var(--t2)">Always available alongside the webhook — paste a URL to queue a run now.</div></div>
+        <input type="text" placeholder="https://…/page-slug" style="flex:1;min-width:220px;height:36px;border:1px solid var(--border);border-radius:var(--r);padding:0 12px;font-family:inherit;font-size:13px;color:var(--ink);background:var(--surface);">
+        <button class="btn btn-pri">Queue a run</button>
+      </div>
+      <div class="card" style="margin-top:12px;"><b style="font-size:13px">Scheduled sweep</b><div class="kv" style="color:var(--t2);margin-top:2px">Re-QA the whole fleet on a cadence — catches regressions between deploys. <span class="chip c-grey" style="margin-left:4px">Off</span></div></div>
+
+      <div class="sec-h" style="margin-top:22px">Roles & notification routing</div>
+      <div class="banner info"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex:none;margin-top:1px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="8"/></svg><div>The page itself never reveals who built it — the June 12 page exposed no author. Owner comes from app.alyson.ai's record via the deploy event, not from scraping the page.</div></div>
+      <table>
+        <thead><tr><th style="width:24%">Recipient</th><th>Source</th><th>Gets emailed</th></tr></thead>
+        <tbody>
+          <tr><td><b>Page owner</b></td><td>Deploy-event <code>owner</code> → template-owner default → admin override (editable in UI)</td><td>Every completed run for their pages</td></tr>
+          <tr><td><b>Admins / QA channel</b></td><td>Org-level list, set once here (not per page)</td><td>Daily digest + immediate P0 escalation, fleet-wide</td></tr>
+          <tr><td><b>Security / legal</b></td><td>Org-level distribution list, set once here</td><td>Auto-CC on P0 security/privacy findings only</td></tr>
+        </tbody>
+      </table>
+      <div class="card" style="margin-top:12px;">
+        <b style="font-size:13px">Template → owner map (owner fallback)</b>
+        <div class="ownerbox" style="margin-top:8px">
+          <div class="row"><span>value-estimator</span><b class="muted">unassigned — routed by area until set</b></div>
+          <div class="row"><span>cash-offer</span><b class="muted">unassigned</b></div>
+          <div class="row"><span>report-optin</span><b class="muted">unassigned</b></div>
+        </div>
+        <p class="legend">In the June 12 run no owner was known, so findings routed by area (Backend · Frontend + Legal · Security) — not by a detected author. Real owners populate once the deploy event carries them or an admin sets the map.</p>
+      </div>
+    </section>
+
+    <section class="screen" id="na"><h1 class="title">Section</h1><p class="sub">Part of the shell contract (Data · Experimentation). Not in scope for this prototype.</p></section>
+
+  </main>
+</div>
+
+<script>
+// nav switching
+var crumbMap={dash:'<b>Overview</b> · Dashboard',pages:'<b>Pages</b> · Pages',templates:'<b>Pages</b> · Templates',
+  runs:'<b>Quality</b> · QA runs',findings:'<b>Quality</b> · Findings',alerts:'<b>Quality</b> · Alerts',
+  tasks:'<b>Work</b> · Tasks',reports:'<b>Analytics</b> · Reports',settings:'<b>Settings</b> · Triggers & roles',na:'<b>Settings</b>'};
+function go(s){
+  document.querySelectorAll('.screen').forEach(function(e){e.classList.toggle('show',e.id===s);});
+  document.querySelectorAll('.nav').forEach(function(n){n.classList.toggle('active',n.dataset.s===s);});
+  document.getElementById('crumb').innerHTML=crumbMap[s]||'';
+  document.querySelector('.main').scrollTop=0;
+}
+document.querySelectorAll('.nav').forEach(function(n){n.onclick=function(){go(n.dataset.s);};});
+document.querySelectorAll('[data-go]').forEach(function(a){a.onclick=function(e){e.preventDefault();go(a.dataset.go);};});
+
+// findings data (REAL — from the run + source review)
+var F=[
+  {s:'p0',d:'Security',t:'PII (email, name) base64-encoded into the HomeLight redirect URL',r:'gated',rc:'c-warn',rl:'Human-gated',o:'Backend'},
+  {s:'p0',d:'Privacy',t:'Inspectlet session recorder captures form fields pre-consent',r:'gated',rc:'c-warn',rl:'Human-gated',o:'Legal'},
+  {s:'p0',d:'Security',t:'No security response headers on a PII-collecting funnel',r:'fixed',rc:'c-info',rl:'Auto-fixed (PR)',o:'Frontend'},
+  {s:'p1',d:'Compliance',t:'No consent banner / consent_status commented out',r:'gated',rc:'c-warn',rl:'Human-gated',o:'Legal'},
+  {s:'p1',d:'Security',t:'Console / cookie_id leakage (32 calls) to the browser console',r:'fixed',rc:'c-info',rl:'Auto-fixed (PR)',o:'Frontend'},
+  {s:'p1',d:'Functional',t:'Repeating runtime TypeError in jQuery event layer (939 msgs)',r:'open',rc:'c-dng',rl:'Open · auto-fixable',o:'Frontend'},
+  {s:'p1',d:'Functional',t:'Zero data-testid hooks (Playwright forced onto brittle selectors)',r:'fixed',rc:'c-info',rl:'Auto-fixed (PR)',o:'Frontend'},
+  {s:'p1',d:'Security',t:'No enforced CSP (report-only added; allowlist needed)',r:'gated',rc:'c-warn',rl:'Human-gated',o:'Security'},
+  {s:'p2',d:'Accessibility',t:'Pinch-zoom disabled (user-scalable=0, WCAG 1.4.4)',r:'fixed',rc:'c-info',rl:'Auto-fixed (PR)',o:'Frontend'},
+  {s:'p2',d:'Security',t:'Unsafe target=_blank links (reverse-tabnabbing)',r:'fixed',rc:'c-info',rl:'Auto-fixed (PR)',o:'Frontend'},
+  {s:'p2',d:'Data integrity',t:'utm_content == sessionId (attribution coupling)',r:'open',rc:'c-dng',rl:'Open · auto-fixable',o:'Frontend'}
+];
+function sevTag(s){return '<span class="sev '+s+'">'+s.toUpperCase()+'</span>';}
+function renderF(f){
+  var rows=F.filter(function(x){
+    if(f==='all')return true;
+    if(f==='p0')return x.s==='p0';
+    if(f==='open')return x.r==='open';
+    if(f==='fixed')return x.r==='fixed';
+    if(f==='gated')return x.r==='gated';
+  });
+  document.getElementById('fRows').innerHTML=rows.map(function(x){
+    return '<tr><td>'+sevTag(x.s)+'</td><td class="muted">'+x.d+'</td><td>'+x.t+
+      '</td><td><span class="chip '+x.rc+'">'+x.rl+'</span></td><td class="muted">'+x.o+'</td></tr>';
+  }).join('');
+}
+renderF('all');
+document.querySelectorAll('#fFilters .btn').forEach(function(b){b.onclick=function(){
+  document.querySelectorAll('#fFilters .btn').forEach(function(x){x.classList.remove('active');});
+  b.classList.add('active'); renderF(b.dataset.f);
+};});
+
+// template expand toggle on pages
+document.querySelectorAll('#pages .tpl-row[data-tpl]').forEach(function(r){
+  r.onclick=function(){
+    var open=r.querySelector('.chev').textContent==='▾';
+    r.querySelector('.chev').textContent=open?'▸':'▾';
+    document.querySelectorAll('#pages tr[data-tpl="ve"]:not(.tpl-row)').forEach(function(x){
+      x.style.display=open?'none':'';
+    });
+  };
+});
+</script>
+</body>
+</html>
