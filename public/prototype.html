@@ -24,10 +24,16 @@
     border-bottom:1px solid var(--border);border-right:1px solid var(--border);background:var(--surface);}
   .brand .logo{width:26px;height:26px;border-radius:50%;display:block;flex:none;}
   .brand .name{font-weight:600;font-size:15px;}
-  .header{grid-area:header;display:flex;align-items:center;justify-content:space-between;
+  .header{grid-area:header;display:flex;align-items:center;justify-content:space-between;gap:16px;
     padding:0 24px;border-bottom:1px solid var(--border);background:var(--surface);}
-  .header .crumb{color:var(--t2);font-size:13px;}
-  .header .crumb b{color:var(--ink);font-weight:600;}
+  .header .search{flex:1;max-width:560px;position:relative;}
+  .header .search input{width:100%;height:36px;border:1px solid var(--border);border-radius:var(--r);
+    padding:0 12px 0 36px;font-family:inherit;font-size:13px;color:var(--ink);background:var(--surface);}
+  .header .search svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:15px;height:15px;color:var(--t3);}
+  .header .search kbd{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:11px;color:var(--t3);
+    border:1px solid var(--border);border-radius:4px;padding:1px 6px;background:var(--canvas);font-family:inherit;}
+  .crumb{color:var(--t2);font-size:12px;letter-spacing:.02em;margin:0 0 8px;text-transform:uppercase;}
+  .crumb b{color:var(--ink);font-weight:600;}
   .header .right{display:flex;align-items:center;gap:14px;}
   .pill-role{font-size:12px;color:var(--t2);border:1px solid var(--border);border-radius:var(--r);padding:4px 10px;}
   .avatar{width:28px;height:28px;border-radius:50%;background:var(--primary-weak);color:var(--primary);
@@ -104,33 +110,16 @@
 </head>
 <body>
 <div class="app">
-  <div class="brand"><svg class="logo" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Alyson QA Agent">
-      <circle cx="32" cy="32" r="32" fill="#F5A623"/>
-      <circle cx="32" cy="32" r="26.5" fill="#F2F1EC"/>
-      <clipPath id="brandClip"><circle cx="32" cy="32" r="26.5"/></clipPath>
-      <g clip-path="url(#brandClip)">
-        <path d="M15 32 C13 16 51 16 49 32 C50 46 47 60 47 64 L17 64 C17 60 14 46 15 32 Z" fill="#141342"/>
-        <rect x="26" y="39" width="12" height="13" fill="#F0BB9B"/>
-        <path d="M15 64 C16 52 24 49 32 49 C40 49 48 52 49 64 Z" fill="#F5A623"/>
-        <path d="M21 26 C21 16 43 16 43 26 L43 35 C43 45 37 49 32 49 C27 49 21 45 21 35 Z" fill="#F7D7BE"/>
-        <path d="M21 27 C19 33 19 44 23 51 L16.5 50 C13 40 13.5 28 19 23 Z" fill="#141342"/>
-        <path d="M20 27 C21 17 43 17 44 27 C39 21 25 21 20 27 Z" fill="#141342"/>
-        <path d="M23 26.5 q3 -2 6 -0.3" stroke="#141342" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-        <path d="M35 26 q3 -1.5 5 0.2" stroke="#141342" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-        <circle cx="27" cy="31" r="4.7" fill="#5B9BE0"/>
-        <circle cx="38.5" cy="31" r="4.7" fill="#5B9BE0"/>
-        <circle cx="28" cy="31" r="1.5" fill="#1B2A52"/>
-        <circle cx="39.5" cy="31" r="1.5" fill="#1B2A52"/>
-        <circle cx="27" cy="31" r="4.7" fill="none" stroke="#2A2A66" stroke-width="1.7"/>
-        <circle cx="38.5" cy="31" r="4.7" fill="none" stroke="#2A2A66" stroke-width="1.7"/>
-        <path d="M31.7 30.6 h3" stroke="#2A2A66" stroke-width="1.7"/>
-        <path d="M31.5 33 q-1 3 0.6 4" stroke="#E0A98C" stroke-width="1" fill="none" stroke-linecap="round"/>
-        <path d="M28 39 q4 3.5 8 0 q-4 1.5 -8 0 Z" fill="#fff"/>
-        <path d="M28 39 q4 3.5 8 0" fill="none" stroke="#B65C5C" stroke-width="1.3" stroke-linecap="round"/>
-      </g>
-    </svg><div class="name">Alyson QA Agent</div></div>
+  <div class="brand">
+    <img class="logo" src="/__l5e/assets-v1/518d44f6-7165-486e-a353-0ef93924f08a/alyson.png" alt="Alyson QA Agent">
+    <div class="name">Alyson QA Agent</div>
+  </div>
   <div class="header">
-    <div class="crumb" id="crumb"><b>Overview</b> · Dashboard</div>
+    <div class="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" placeholder="Search pages, runs, findings…">
+      <kbd>⌘K</kbd>
+    </div>
     <div class="right">
       <span class="pill-role">Admin · whole fleet</span>
       <div class="avatar">UZ</div>
