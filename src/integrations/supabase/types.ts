@@ -14,16 +14,263 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      findings: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          kind: string
+          location: string | null
+          metadata: Json
+          owner_id: string
+          project_id: string
+          run_id: string | null
+          severity: Database["public"]["Enums"]["finding_severity"]
+          status: Database["public"]["Enums"]["finding_status"]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          kind: string
+          location?: string | null
+          metadata?: Json
+          owner_id: string
+          project_id: string
+          run_id?: string | null
+          severity?: Database["public"]["Enums"]["finding_severity"]
+          status?: Database["public"]["Enums"]["finding_status"]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          kind?: string
+          location?: string | null
+          metadata?: Json
+          owner_id?: string
+          project_id?: string
+          run_id?: string | null
+          severity?: Database["public"]["Enums"]["finding_severity"]
+          status?: Database["public"]["Enums"]["finding_status"]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "findings_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "findings_run_id_fkey"
+            columns: ["run_id"]
+            isOneToOne: false
+            referencedRelation: "qa_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          display_name: string | null
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id: string
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      projects: {
+        Row: {
+          created_at: string
+          default_branch: string
+          gates_config: Json
+          id: string
+          name: string
+          owner_id: string
+          repo_url: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          default_branch?: string
+          gates_config?: Json
+          id?: string
+          name: string
+          owner_id: string
+          repo_url?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          default_branch?: string
+          gates_config?: Json
+          id?: string
+          name?: string
+          owner_id?: string
+          repo_url?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      qa_runs: {
+        Row: {
+          branch: string | null
+          commit_sha: string | null
+          created_at: string
+          finished_at: string | null
+          id: string
+          owner_id: string
+          project_id: string
+          started_at: string
+          status: Database["public"]["Enums"]["run_status"]
+          summary: Json
+          trigger: string
+        }
+        Insert: {
+          branch?: string | null
+          commit_sha?: string | null
+          created_at?: string
+          finished_at?: string | null
+          id?: string
+          owner_id: string
+          project_id: string
+          started_at?: string
+          status?: Database["public"]["Enums"]["run_status"]
+          summary?: Json
+          trigger?: string
+        }
+        Update: {
+          branch?: string | null
+          commit_sha?: string | null
+          created_at?: string
+          finished_at?: string | null
+          id?: string
+          owner_id?: string
+          project_id?: string
+          started_at?: string
+          status?: Database["public"]["Enums"]["run_status"]
+          summary?: Json
+          trigger?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "qa_runs_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      run_gates: {
+        Row: {
+          created_at: string
+          duration_ms: number | null
+          id: string
+          name: string
+          ordering: number
+          output: Json
+          owner_id: string
+          phase: string
+          run_id: string
+          status: Database["public"]["Enums"]["gate_status"]
+        }
+        Insert: {
+          created_at?: string
+          duration_ms?: number | null
+          id?: string
+          name: string
+          ordering?: number
+          output?: Json
+          owner_id: string
+          phase: string
+          run_id: string
+          status?: Database["public"]["Enums"]["gate_status"]
+        }
+        Update: {
+          created_at?: string
+          duration_ms?: number | null
+          id?: string
+          name?: string
+          ordering?: number
+          output?: Json
+          owner_id?: string
+          phase?: string
+          run_id?: string
+          status?: Database["public"]["Enums"]["gate_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "run_gates_run_id_fkey"
+            columns: ["run_id"]
+            isOneToOne: false
+            referencedRelation: "qa_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "member"
+      finding_severity: "info" | "low" | "medium" | "high" | "critical"
+      finding_status: "open" | "acknowledged" | "resolved" | "ignored"
+      gate_status: "pending" | "running" | "passed" | "failed" | "skipped"
+      run_status: "pending" | "running" | "passed" | "failed" | "cancelled"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +397,12 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "member"],
+      finding_severity: ["info", "low", "medium", "high", "critical"],
+      finding_status: ["open", "acknowledged", "resolved", "ignored"],
+      gate_status: ["pending", "running", "passed", "failed", "skipped"],
+      run_status: ["pending", "running", "passed", "failed", "cancelled"],
+    },
   },
 } as const
