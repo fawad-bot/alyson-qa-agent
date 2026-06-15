@@ -3,76 +3,84 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Fleet Quality Hub — prototype</title>
+<title>Alyson QA Agent</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --canvas:#FAFAF7; --surface:#FFFFFF; --primary:#2D6CF6; --primary-weak:#EEF3FE;
-    --ink:#1A2332; --t2:#5B6472; --t3:#8A93A2; --border:#E6E9EF;
-    --ok-bg:#E7F5EC; --ok:#1E7D45; --warn-bg:#FCF3E2; --warn:#B9770E;
-    --dng-bg:#FBEAE8; --dng:#C0392B; --info-bg:#EEF3FE; --info:#2D6CF6;
-    --r:8px;
+    --canvas:#F6F7F9; --surface:#FFFFFF; --primary:#2563EB; --primary-weak:#EAF1FE;
+    --ink:#0F172A; --t2:#475569; --t3:#94A3B8; --border:#E8EBF0;
+    --ok-bg:#E7F6EC; --ok:#15803D; --warn-bg:#FCF3E2; --warn:#B45309;
+    --dng-bg:#FBEAE8; --dng:#DC2626; --info-bg:#EAF1FE; --info:#2563EB;
+    --indigo-bg:#EEF0FE; --indigo:#4F46E5;
+    --r:10px; --r-sm:8px; --chatw:360px;
   }
   *{box-sizing:border-box;}
   html,body{margin:0;height:100%;}
   body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     background:var(--canvas);color:var(--ink);font-size:14px;line-height:1.5;
-    font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased;}
-  /* app shell */
-  .app{display:grid;grid-template-columns:240px 1fr;grid-template-rows:64px 1fr;height:100vh;
-    grid-template-areas:"brand header" "side main";}
-  .brand{grid-area:brand;display:flex;align-items:center;gap:10px;padding:0 18px;
-    border-bottom:1px solid var(--border);border-right:1px solid var(--border);background:var(--surface);}
-  .brand .logo{width:26px;height:26px;border-radius:50%;display:block;flex:none;}
-  .brand .name{font-weight:600;font-size:15px;}
-  .header{grid-area:header;display:flex;align-items:center;justify-content:space-between;gap:16px;
-    padding:0 24px;border-bottom:1px solid var(--border);background:var(--surface);}
-  .header .search{flex:1;max-width:560px;position:relative;}
-  .header .search input{width:100%;height:36px;border:1px solid var(--border);border-radius:var(--r);
-    padding:0 12px 0 36px;font-family:inherit;font-size:13px;color:var(--ink);background:var(--surface);}
-  .header .search svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:15px;height:15px;color:var(--t3);}
-  .header .search kbd{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:11px;color:var(--t3);
-    border:1px solid var(--border);border-radius:4px;padding:1px 6px;background:var(--canvas);font-family:inherit;}
-  .crumb{color:var(--t2);font-size:12px;letter-spacing:.02em;margin:0 0 8px;text-transform:uppercase;}
-  .crumb b{color:var(--ink);font-weight:600;}
-  .header .right{display:flex;align-items:center;gap:14px;}
-  .pill-role{font-size:12px;color:var(--t2);border:1px solid var(--border);border-radius:var(--r);padding:4px 10px;}
-  .avatar{width:28px;height:28px;border-radius:50%;background:var(--primary-weak);color:var(--primary);
-    display:grid;place-items:center;font-size:12px;font-weight:600;}
-  .side{grid-area:side;border-right:1px solid var(--border);background:var(--surface);overflow-y:auto;padding:14px 10px;}
-  .grp{font-size:11px;letter-spacing:.04em;color:var(--t3);text-transform:uppercase;
-    padding:14px 10px 6px;font-weight:600;}
-  .nav{display:flex;align-items:center;gap:10px;width:100%;border:0;background:transparent;cursor:pointer;
-    text-align:left;color:var(--t2);font-size:13.5px;padding:8px 10px;border-radius:var(--r);font-family:inherit;}
-  .nav:hover{background:var(--canvas);}
+    font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased;display:flex;flex-direction:column;height:100vh;}
+  /* os titlebar */
+  .titlebar{height:34px;background:#0a0a0b;flex:none;display:flex;align-items:center;padding:0 14px;gap:8px;}
+  .traffic{width:11px;height:11px;border-radius:50%;}
+  .t-r{background:#ff5f57;} .t-y{background:#febc2e;} .t-g{background:#28c840;}
+  /* app grid */
+  .app{flex:1;display:grid;grid-template-columns:248px 1fr var(--chatw);min-height:0;transition:grid-template-columns .18s ease;}
+  .app.chat-collapsed{--chatw:50px;}
+  /* sidebar */
+  .side{background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;min-height:0;}
+  .brand{display:flex;align-items:center;gap:10px;height:64px;flex:none;padding:0 16px;border-bottom:1px solid var(--border);}
+  .brand .logo{width:28px;height:28px;border-radius:50%;display:block;flex:none;}
+  .brand .name{font-weight:700;font-size:16px;letter-spacing:-.01em;}
+  .brand .gear{margin-left:auto;color:var(--t3);width:18px;height:18px;cursor:pointer;}
+  .nav-scroll{flex:1;overflow-y:auto;padding:10px 10px 16px;}
+  .grp{font-size:11px;letter-spacing:.06em;color:var(--t3);text-transform:uppercase;padding:16px 10px 6px;font-weight:600;}
+  .nav{display:flex;align-items:center;gap:11px;width:100%;border:0;background:transparent;cursor:pointer;
+    text-align:left;color:var(--t2);font-size:14px;padding:8px 10px;border-radius:var(--r-sm);font-family:inherit;margin:1px 0;}
+  .nav:hover{background:#F1F5F9;color:var(--ink);}
   .nav.active{background:var(--primary-weak);color:var(--primary);font-weight:600;}
-  .nav svg{width:16px;height:16px;flex:none;}
-  .nav .count{margin-left:auto;font-size:11px;background:var(--canvas);color:var(--t2);border-radius:20px;padding:1px 8px;}
+  .nav svg{width:18px;height:18px;flex:none;}
+  .nav .count{margin-left:auto;font-size:11px;background:#F1F5F9;color:var(--t2);border-radius:20px;padding:1px 8px;font-weight:600;}
   .nav.active .count{background:#fff;color:var(--primary);}
   .nav .dot{margin-left:auto;width:7px;height:7px;border-radius:50%;background:var(--dng);}
-  .main{grid-area:main;overflow-y:auto;padding:24px 28px 60px;background:var(--surface);}
-  .screen{display:none;max-width:1080px;}
+  .nav.soon{color:var(--t3);cursor:default;}
+  .nav.soon:hover{background:transparent;color:var(--t3);}
+  .pill-new{margin-left:auto;font-size:9.5px;font-weight:700;letter-spacing:.04em;color:var(--indigo);background:var(--indigo-bg);border-radius:5px;padding:2px 6px;}
+  .pill-soon{margin-left:auto;font-size:9.5px;font-weight:700;letter-spacing:.06em;color:var(--t3);}
+  .usercard{flex:none;border-top:1px solid var(--border);padding:12px 14px;display:flex;align-items:center;gap:10px;}
+  .usercard .uav{width:32px;height:32px;border-radius:9px;background:var(--primary-weak);color:var(--primary);display:grid;place-items:center;font-size:13px;font-weight:700;flex:none;}
+  .usercard .un{font-size:13px;font-weight:600;line-height:1.2;}
+  .usercard .ur{font-size:11.5px;color:var(--t3);}
+  .usercard .lo{margin-left:auto;color:var(--t3);width:17px;height:17px;cursor:pointer;}
+  /* main */
+  .main{overflow-y:auto;padding:30px 36px 64px;min-height:0;}
+  .eyebrow{font-size:12px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--primary);margin-bottom:8px;}
+  .screen{display:none;max-width:1120px;}
   .screen.show{display:block;}
-  h1.title{font-size:22px;font-weight:600;margin:0 0 2px;}
-  .sub{color:var(--t2);font-size:13.5px;margin:0 0 20px;}
+  h1.title{font-size:30px;font-weight:700;letter-spacing:-.02em;margin:0 0 6px;line-height:1.15;}
+  .sub{color:var(--t2);font-size:15px;margin:0 0 24px;max-width:760px;}
   /* cards / kpi */
-  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:20px;}
-  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px;}
-  .kpi .lbl{font-size:12.5px;color:var(--t2);margin-bottom:6px;}
-  .kpi .val{font-size:24px;font-weight:600;line-height:1.1;}
-  .kpi .val small{font-size:12px;font-weight:400;color:var(--t3);}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:16px;margin-bottom:22px;}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px;}
+  .kpi .lbl{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--t3);font-weight:600;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;}
+  .kpi .lbl svg{width:15px;height:15px;color:var(--t3);}
+  .kpi .val{font-size:30px;font-weight:700;line-height:1;letter-spacing:-.02em;}
+  .kpi .val small{font-size:12px;font-weight:400;color:var(--t3);letter-spacing:0;}
+  .kpi .foot{font-size:12px;color:var(--t3);margin-top:8px;}
   .kpi .val.dng{color:var(--dng);} .kpi .val.warn{color:var(--warn);} .kpi .val.ok{color:var(--ok);}
-  .banner{display:flex;gap:10px;align-items:flex-start;border-radius:var(--r);padding:12px 14px;font-size:13px;margin-bottom:18px;}
-  .banner.dng{background:var(--dng-bg);color:var(--dng);} .banner.info{background:var(--info-bg);color:var(--info);}
-  .banner b{font-weight:600;}
-  .sec-h{font-size:13px;font-weight:600;color:var(--ink);margin:22px 0 10px;}
+  .foot.dng{color:var(--dng);} .foot.ok{color:var(--ok);}
+  .banner{display:flex;gap:11px;align-items:flex-start;border-radius:var(--r);padding:14px 16px;font-size:13.5px;margin-bottom:18px;border:1px solid transparent;}
+  .banner.dng{background:var(--dng-bg);color:var(--dng);border-color:#F3CFCB;} .banner.info{background:var(--info-bg);color:var(--info);border-color:#D3E2FC;}
+  .banner b{font-weight:700;}
+  .banner svg{flex:none;margin-top:1px;}
+  .sec-h{font-size:13px;font-weight:700;color:var(--ink);margin:26px 0 12px;letter-spacing:-.01em;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
   /* table */
-  table{width:100%;border-collapse:collapse;font-size:13px;background:var(--surface);
-    border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
-  thead th{text-align:left;font-weight:600;color:var(--t2);font-size:12px;padding:10px 12px;
-    border-bottom:1px solid var(--border);background:#FCFCFB;}
-  tbody td{padding:11px 12px;border-bottom:1px solid var(--border);vertical-align:top;}
+  table{width:100%;border-collapse:collapse;font-size:13px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
+  thead th{text-align:left;font-weight:600;color:var(--t2);font-size:11px;letter-spacing:.05em;text-transform:uppercase;padding:11px 14px;border-bottom:1px solid var(--border);background:#FBFCFD;}
+  tbody td{padding:12px 14px;border-bottom:1px solid var(--border);vertical-align:top;}
   tbody tr:last-child td{border-bottom:0;}
-  .tpl-row td{background:#FCFCFB;font-weight:600;cursor:pointer;}
+  .tpl-row td{background:#FBFCFD;font-weight:600;cursor:pointer;}
   .tpl-row .chev{color:var(--t3);font-weight:400;}
   .muted{color:var(--t3);}
   .mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;}
@@ -80,90 +88,175 @@
   .chip{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11.5px;font-weight:500;white-space:nowrap;}
   .c-ok{background:var(--ok-bg);color:var(--ok);} .c-warn{background:var(--warn-bg);color:var(--warn);}
   .c-dng{background:var(--dng-bg);color:var(--dng);} .c-info{background:var(--info-bg);color:var(--info);}
-  .c-grey{background:var(--canvas);color:var(--t2);border:1px solid var(--border);}
-  .sev{font-weight:600;font-size:12px;} .sev.p0{color:var(--dng);} .sev.p1{color:var(--warn);} .sev.p2{color:var(--ok);}
+  .c-grey{background:#F1F5F9;color:var(--t2);}
+  .sev{font-weight:700;font-size:12px;} .sev.p0{color:var(--dng);} .sev.p1{color:var(--warn);} .sev.p2{color:var(--ok);}
   .methods{display:flex;gap:6px;flex-wrap:wrap;}
+  /* gates */
+  .gaterow{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px;}
+  .gaterow:last-child{border-bottom:0;}
+  .gaterow .gi{width:18px;height:18px;flex:none;}
+  .gaterow .gn{font-weight:600;}
+  .gaterow .gd{color:var(--t3);font-size:12px;margin-left:auto;text-align:right;}
+  .gpass{color:var(--ok);} .gfail{color:var(--dng);} .gskip{color:var(--t3);}
   /* filters / buttons */
-  .filters{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px;}
-  .btn{font-family:inherit;font-size:12.5px;color:var(--t2);background:var(--surface);
-    border:1px solid var(--border);border-radius:var(--r);padding:6px 12px;cursor:pointer;}
+  .filters{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 16px;}
+  .btn{font-family:inherit;font-size:12.5px;font-weight:500;color:var(--t2);background:var(--surface);border:1px solid var(--border);border-radius:var(--r-sm);padding:7px 13px;cursor:pointer;}
+  .btn:hover{background:#F8FAFC;}
   .btn.active{background:var(--primary);color:#fff;border-color:var(--primary);}
-  .btn-pri{background:var(--primary);color:#fff;border-color:var(--primary);}
+  .btn-pri{background:var(--primary);color:#fff;border-color:var(--primary);font-weight:600;}
+  .btn-pri:hover{background:#1D4FD8;}
   /* timeline */
-  .step{display:grid;grid-template-columns:150px 1fr;gap:16px;padding:16px 0;border-bottom:1px solid var(--border);}
+  .step{display:grid;grid-template-columns:150px 1fr;gap:18px;padding:18px 0;border-bottom:1px solid var(--border);}
   .step:last-child{border-bottom:0;}
-  .shot{height:96px;border-radius:6px;border:1px solid var(--border);background:
-    repeating-linear-gradient(45deg,#F3F5F9 0 8px,#FAFBFD 8px 16px);display:grid;place-items:center;
-    color:var(--t3);font-size:11px;text-align:center;padding:6px;}
-  .step .act{font-weight:600;margin-bottom:6px;}
-  .kv{font-size:12.5px;color:var(--t2);margin:2px 0;}
+  .shot{height:96px;border-radius:8px;border:1px solid var(--border);background:repeating-linear-gradient(45deg,#EEF1F6 0 8px,#F8FAFC 8px 16px);display:grid;place-items:center;color:var(--t3);font-size:11px;text-align:center;padding:6px;}
+  .step .act{font-weight:700;margin-bottom:6px;}
+  .kv{font-size:12.5px;color:var(--t2);margin:3px 0;}
   .kv b{color:var(--ink);font-weight:600;}
-  .tag{display:inline-block;font-size:11px;padding:1px 7px;border-radius:6px;background:var(--canvas);color:var(--t2);border:1px solid var(--border);margin-left:6px;}
-  .task-card{display:grid;grid-template-columns:1fr 220px;gap:18px;}
-  ul.done{margin:6px 0 0;padding-left:18px;} ul.done li{margin:3px 0;color:var(--t2);font-size:12.5px;}
-  .ownerbox .row{display:flex;justify-content:space-between;font-size:12.5px;padding:4px 0;border-bottom:1px solid var(--border);}
+  .tag{display:inline-block;font-size:11px;padding:1px 7px;border-radius:6px;background:#F1F5F9;color:var(--t2);margin-left:6px;}
+  .task-card{display:grid;grid-template-columns:1fr 230px;gap:20px;}
+  ul.done{margin:6px 0 0;padding-left:18px;} ul.done li{margin:4px 0;color:var(--t2);font-size:12.5px;}
+  .ownerbox .row{display:flex;justify-content:space-between;font-size:12.5px;padding:5px 0;border-bottom:1px solid var(--border);gap:10px;}
   .ownerbox .row:last-child{border-bottom:0;}
   .ownerbox .row span:first-child{color:var(--t2);}
-  .legend{font-size:11.5px;color:var(--t3);margin-top:10px;}
-  a.lnk{color:var(--primary);text-decoration:none;}
+  .legend{font-size:11.5px;color:var(--t3);margin-top:12px;}
+  a.lnk{color:var(--primary);text-decoration:none;font-weight:600;}
+  pre{margin:6px 0 0;padding:14px;background:#0f172a;border-radius:8px;font-size:12px;overflow:auto;color:#cbd5e1;line-height:1.55;}
+  /* chat panel */
+  .chat{background:var(--surface);border-left:1px solid var(--border);display:flex;flex-direction:column;min-height:0;}
+  .chat-rail{display:none;flex-direction:column;align-items:center;gap:16px;padding:14px 0;}
+  .app.chat-collapsed .chat-full{display:none;}
+  .app.chat-collapsed .chat-rail{display:flex;}
+  .rail-btn{border:0;background:transparent;cursor:pointer;color:var(--t3);width:22px;height:22px;}
+  .rail-spark{width:22px;height:22px;}
+  .rail-label{writing-mode:vertical-rl;transform:rotate(180deg);font-size:11px;letter-spacing:.18em;color:var(--t3);font-weight:600;margin-top:6px;}
+  .chat-full{display:flex;flex-direction:column;min-height:0;height:100%;}
+  .chat-head{display:flex;align-items:center;gap:9px;height:56px;flex:none;padding:0 14px;border-bottom:1px solid var(--border);}
+  .chat-head .ai-spark{width:22px;height:22px;flex:none;}
+  .chat-head .ai-name{font-weight:700;font-size:14px;}
+  .chat-head .acts{margin-left:auto;display:flex;align-items:center;gap:12px;color:var(--t3);}
+  .chat-head .acts svg{width:17px;height:17px;cursor:pointer;}
+  .chat-ctx{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--t2);}
+  .chat-ctx .gl{width:15px;height:15px;color:var(--t3);}
+  .chat-ctx .addc{margin-left:auto;color:var(--primary);font-size:12.5px;font-weight:600;cursor:pointer;}
+  .chat-body{flex:1;overflow-y:auto;padding:16px 14px;display:flex;flex-direction:column;gap:14px;}
+  .msg{display:flex;gap:9px;align-items:flex-start;}
+  .msg .mav{width:26px;height:26px;border-radius:7px;background:var(--primary-weak);display:grid;place-items:center;flex:none;}
+  .msg .mav svg{width:15px;height:15px;}
+  .msg .bub{background:#F1F5F9;border-radius:10px;padding:10px 13px;font-size:13.5px;color:var(--ink);}
+  .recent{border-top:1px solid var(--border);padding:14px;flex:none;}
+  .recent .rl{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--t3);font-weight:600;margin-bottom:10px;}
+  .recent .ri{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--t2);padding:6px 0;cursor:pointer;}
+  .recent .ri:hover{color:var(--ink);}
+  .recent .ri svg{width:15px;height:15px;color:var(--t3);flex:none;}
+  .chat-input{flex:none;padding:12px 14px;border-top:1px solid var(--border);display:flex;gap:9px;align-items:center;}
+  .chat-input input{flex:1;height:40px;border:1px solid var(--border);border-radius:10px;padding:0 13px;font-family:inherit;font-size:13.5px;background:var(--surface);color:var(--ink);}
+  .chat-input input::placeholder{color:var(--t3);}
+  .chat-input .send{width:40px;height:40px;border:0;border-radius:10px;background:var(--primary);color:#fff;display:grid;place-items:center;cursor:pointer;flex:none;}
 </style>
 </head>
 <body>
-<div class="app">
-  <div class="brand">
-    <img class="logo" src="/__l5e/assets-v1/518d44f6-7165-486e-a353-0ef93924f08a/alyson.png" alt="Alyson QA Agent">
-    <div class="name">Alyson QA Agent</div>
-  </div>
-  <div class="header">
-    <div class="search">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <input type="text" placeholder="Search pages, runs, findings…">
-      <kbd>⌘K</kbd>
-    </div>
-    <div class="right">
-      <span class="pill-role">Admin · whole fleet</span>
-      <div class="avatar">UZ</div>
-    </div>
-  </div>
+<div class="titlebar"><span class="traffic t-r"></span><span class="traffic t-y"></span><span class="traffic t-g"></span></div>
+<div class="app" id="app">
 
-  <nav class="side" id="side">
-    <div class="grp">Overview</div>
-    <button class="nav active" data-s="dash"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Dashboard</span></button>
-    <div class="grp">Pages</div>
-    <button class="nav" data-s="pages"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 22 8.5 12 15 2 8.5 12 2"/><polyline points="2 15.5 12 22 22 15.5"/></svg><span>Pages</span><span class="count">1 run</span></button>
-    <button class="nav" data-s="templates"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><span>Templates</span></button>
-    <div class="grp">Quality</div>
-    <button class="nav" data-s="runs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="6 3 20 12 6 21 6 3"/></svg><span>QA runs</span><span class="count">1</span></button>
-    <button class="nav" data-s="findings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12" y2="17"/></svg><span>Findings</span><span class="count">11</span></button>
-    <button class="nav" data-s="alerts"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span>Alerts</span><span class="dot"></span></button>
-    <div class="grp">Work</div>
-    <button class="nav" data-s="tasks"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg><span>Tasks</span><span class="count">3</span></button>
-    <div class="grp">Analytics</div>
-    <button class="nav" data-s="reports"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span>Reports</span></button>
-    <div class="grp">Data</div>
-    <button class="nav" data-s="na"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/></svg><span>Sources</span></button>
-    <div class="grp">Experimentation</div>
-    <button class="nav" data-s="na"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 1.7 3h10.6a2 2 0 0 0 1.7-3l-5-9V3"/></svg><span>Experiments</span></button>
-    <div class="grp">Settings</div>
-    <button class="nav" data-s="settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-2.82 1.17V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 8 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 3.6 14H3.5a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 5 8.6a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 3.6h.09A1.65 1.65 0 0 0 12 2.6a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 2.82 1.17l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 20.4 9v.09a2 2 0 0 1 0 4z"/></svg><span>Settings</span></button>
-  </nav>
+  <!-- SIDEBAR -->
+  <aside class="side">
+    <div class="brand">
+      <svg class="logo" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" role="img" aria-label="Alyson">
+        <defs><clipPath id="alyClip"><rect width="24" height="24" fill="none"/></clipPath></defs>
+        <g clip-path="url(#alyClip)">
+          <path d="M12,0h0A12,12,0,1,1,0,12,12,12,0,0,1,12,0" fill="#ffa919"/>
+          <path d="M44.521,33.976A10.545,10.545,0,1,1,33.976,44.521,10.545,10.545,0,0,1,44.521,33.976" transform="translate(-32.521 -32.521)" fill="#f2f2f2"/>
+          <path d="M71.39,61.483a9.368,9.368,0,1,1-9.968,8.726,9.368,9.368,0,0,1,9.968-8.726" transform="translate(-58.772 -58.831)" fill="#f2f2f2"/>
+          <path d="M164.906,132.211a4.064,4.064,0,0,0-2.014,2.446,38.222,38.222,0,0,0,.417,6.165l3.547,2.249,2.962.943,1.353-1.906.379-6.3c-.006.005-6.517-3.521-6.645-3.6" transform="translate(-155.87 -126.548)" fill="#f3c4b5" fill-rule="evenodd"/>
+          <path d="M208.9,308.775a5.887,5.887,0,0,1,.787-.148c.284-.032.569-.071.845-.128.086-.016.272-.093.355-.062.016.008-.066.177-.074.193a1.817,1.817,0,0,1-.4.459.909.909,0,0,1-1.514-.314" transform="translate(-199.955 -295.225)" fill="#fff" fill-rule="evenodd"/>
+          <path d="M196.565,302.584c.036-.018.2.13.3.086s.123-.15.232-.2c.061-.032.267.041.336.028.091-.009.212-.143.367-.142a13.652,13.652,0,0,0,1.375.023.781.781,0,0,0,.289-.072c.138-.066.154-.134.192-.087.051.066-.026.136-.1.166a1.584,1.584,0,0,1-.412.106,10.584,10.584,0,0,1-1.5.313,3.208,3.208,0,0,1-.981-.08c-.123-.037-.18-.1-.1-.137" transform="translate(-188.112 -289.263)" fill="#be415b" fill-rule="evenodd"/>
+          <path d="M204.449,305.491a4.3,4.3,0,0,0,.366.307.679.679,0,0,0,.681.214c.341-.117.742-.622,1.012-.744.084-.04.374-.188.373-.177a1.906,1.906,0,0,0-.375.419c-.168.3-.512.978-1.136.976a1.122,1.122,0,0,1-.855-.645c-.082-.127-.14-.224-.214-.334-.013-.014.119-.005.15-.017" transform="translate(-195.552 -292.03)" fill="#be415b" fill-rule="evenodd"/>
+          <path d="M203.319,125.117a3.535,3.535,0,0,0,2.8,3.183,19.14,19.14,0,0,1,2.027,1.264c.273.164-.39-1.524-.7-1.932a11.408,11.408,0,0,0-2.35-2.432c-.463-.326-1.528-1-1.78-.083" transform="translate(-194.615 -119.319)" fill="#e9896e" fill-rule="evenodd"/>
+          <path d="M226.548,204c.182.053.188-.212,1.079-.391a4.1,4.1,0,0,1,1.163,0,2.284,2.284,0,0,0-.88-.25,1.881,1.881,0,0,0-.938.193c-.311.158-.578.407-.423.452" transform="translate(-216.806 -194.65)" fill="#131834" fill-rule="evenodd"/>
+          <path d="M156.914,210.294c-.109.083-.294-.208-.988-.195a2.893,2.893,0,0,0-.872.178c-.006,0,.042-.306.564-.4a1.771,1.771,0,0,1,.857.053c.222.062.593.244.438.364" transform="translate(-148.416 -200.863)" fill="#131834" fill-rule="evenodd"/>
+          <path d="M131.751,96.076a2.229,2.229,0,0,0-1.04,1.04,5.287,5.287,0,0,0-.747,2.519,8.584,8.584,0,0,0,.161,1.757,4.379,4.379,0,0,0,.667,2.144c.419.745,1.363,2.462,2.822,2.1a5.011,5.011,0,0,0,.911-.31c.006-.005.085,1.857.032,1.871a10.607,10.607,0,0,1-2.8.166,2.633,2.633,0,0,0-1.732.832,3.818,3.818,0,0,1-1.589-2.813c-.29-2.523,1.518-3.2,1.341-4.266s-1.28-1.814-1.319-3.228a2.681,2.681,0,0,1,2.2-2.9,4.437,4.437,0,0,1,1.177-.13s.631-1.144,3.256-.768c3.06.441,3.735,1.769,4.024,2.819.446,1.643.292,2.831.814,3.844,1.04,2.024,1.623,2.3,1.734,4.026a4.041,4.041,0,0,1-3.009,3.93,2.951,2.951,0,0,1-1.444-2.213c-.2-1.147-.245-4.4-.245-4.4a2.387,2.387,0,0,0,.7-.666c.205-.3.424-.9.179-1.214a.637.637,0,0,0-1.04.064,2.115,2.115,0,0,0-.318.609,3.455,3.455,0,0,1-.241-.375,3.228,3.228,0,0,0-.581-.744c-.813-.737-1.631-.878-2.623-1.794a3.75,3.75,0,0,1-1.291-1.907" transform="translate(-122.903 -89.997)" fill="#131834" fill-rule="evenodd"/>
+          <path d="M222.665,222.944h0a.505.505,0,0,1,.26-.409,2.774,2.774,0,0,1,.984-.314,4.557,4.557,0,0,1,1.381-.065.711.711,0,0,1,.559.328,1.4,1.4,0,0,1-.011.979,1.97,1.97,0,0,1-.51.819,1.235,1.235,0,0,1-.735.275,2.173,2.173,0,0,1-1.114-.221,1.622,1.622,0,0,1-.609-.577,1.409,1.409,0,0,1-.2-.814m.161.01h0a1.188,1.188,0,0,0,.192.709,1.381,1.381,0,0,0,.548.5,2.061,2.061,0,0,0,.839.193,1.177,1.177,0,0,0,.79-.234,1.683,1.683,0,0,0,.452-.731,1.2,1.2,0,0,0,.031-.832.366.366,0,0,0-.175-.157,1.376,1.376,0,0,0-.42-.094,4.936,4.936,0,0,0-1.132.078,3.253,3.253,0,0,0-.8.215c-.2.1-.31.2-.319.351Z" transform="translate(-213.13 -212.622)" fill="#131834" fill-rule="evenodd"/>
+          <path d="M149.6,233.965h0a1.292,1.292,0,0,1-.041.7,1.258,1.258,0,0,1-.4.581,1.589,1.589,0,0,1-.693.3,1,1,0,0,1-.758-.148,1.746,1.746,0,0,1-.506-.659,1.32,1.32,0,0,1-.138-.825.54.54,0,0,1,.392-.349,3.123,3.123,0,0,1,1.078-.085,2.509,2.509,0,0,1,.7.126.5.5,0,0,1,.361.366m-.16.035h0a.367.367,0,0,0-.263-.247,2.173,2.173,0,0,0-.651-.1,3.647,3.647,0,0,0-.873.049.9.9,0,0,0-.3.121.23.23,0,0,0-.1.137,1.125,1.125,0,0,0,.132.7,1.527,1.527,0,0,0,.444.576.812.812,0,0,0,.6.114,1.315,1.315,0,0,0,.605-.243,1.107,1.107,0,0,0,.347-.491,1.076,1.076,0,0,0,.049-.607Z" transform="translate(-140.76 -223.464)" fill="#131834" fill-rule="evenodd"/>
+          <path d="M237.669,234.484a1.068,1.068,0,0,1,.487-.708,1.236,1.236,0,0,1,.9-.09,2.112,2.112,0,0,0,.686.028.9.9,0,0,1-.379.3.779.779,0,0,1-.345-.029,1.466,1.466,0,0,0-.5-.057,1.284,1.284,0,0,0-.853.557" transform="translate(-227.494 -223.636)" fill="#003f88" fill-rule="evenodd"/>
+          <path d="M248.909,235.675a.439.439,0,1,1,.377.493.439.439,0,0,1-.377-.493" transform="translate(-238.25 -225.22)" fill="#003f88"/>
+          <path d="M166.024,243.147a.446.446,0,0,0-.173-.5,1.031,1.031,0,0,0-.766-.086,1.564,1.564,0,0,1-.566.046.859.859,0,0,0,.361.284.627.627,0,0,0,.308-.035.683.683,0,0,1,.337-.056c.308.028.375.206.5.349" transform="translate(-157.476 -232.138)" fill="#003f88" fill-rule="evenodd"/>
+          <path d="M184.533,245.033a.311.311,0,0,0-.372.315.385.385,0,0,0,.349.419h.018c.217,0,.313-.105.328-.329a.432.432,0,0,0-.324-.406" transform="translate(-176.276 -234.537)" fill="#003f88" fill-rule="evenodd"/>
+          <path d="M167.689,384.148a2.909,2.909,0,0,0,1.079,1.258,1.78,1.78,0,0,0,1.783.155,7.532,7.532,0,0,1-5.508,1.679,8.092,8.092,0,0,1-4.8-1.621,3.182,3.182,0,0,1,.607-.862,2.99,2.99,0,0,1,2.45-.675,5.078,5.078,0,0,0,1.765-.1s.14.414.907.534a3.27,3.27,0,0,0,1.72-.367" transform="translate(-153.379 -367.542)" fill="#fea300" fill-rule="evenodd"/>
+        </g>
+      </svg>
+      <div class="name">Alyson</div>
+      <svg class="gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-2.82 1.17V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 8 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 3.6 14H3.5a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 5 8.6a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 3.6h.09A1.65 1.65 0 0 0 12 2.6a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 2.82 1.17l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 20.4 9v.09a2 2 0 0 1 0 4z"/></svg>
+    </div>
 
+    <nav class="nav-scroll" id="side">
+      <div class="grp">Overview</div>
+      <button class="nav active" data-s="dash"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Dashboard</span></button>
+
+      <div class="grp">Pages</div>
+      <button class="nav" data-s="pages"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 22 8.5 12 15 2 8.5 12 2"/><polyline points="2 15.5 12 22 22 15.5"/></svg><span>Pages</span><span class="count">1 run</span></button>
+      <button class="nav" data-s="templates"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><span>Templates</span></button>
+
+      <div class="grp">Quality</div>
+      <button class="nav" data-s="runs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="6 3 20 12 6 21 6 3"/></svg><span>QA runs</span><span class="count">1</span></button>
+      <button class="nav" data-s="tests"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg><span>Tests &amp; gates</span></button>
+      <button class="nav" data-s="findings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12" y2="17"/></svg><span>Findings</span><span class="count">11</span></button>
+      <button class="nav" data-s="alerts"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span>Alerts</span><span class="dot"></span></button>
+
+      <div class="grp">Work</div>
+      <button class="nav" data-s="tasks"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg><span>Tasks</span><span class="count">3</span></button>
+
+      <div class="grp">Configuration</div>
+      <button class="nav" data-s="settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-2.82 1.17V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 8 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 3.6 14H3.5a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 5 8.6a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 3.6h.09A1.65 1.65 0 0 0 12 2.6a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 2.82 1.17l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 20.4 9v.09a2 2 0 0 1 0 4z"/></svg><span>Triggers &amp; roles</span></button>
+    </nav>
+
+    <div class="usercard">
+      <div class="uav">F</div>
+      <div><div class="un">Fawad Waheed</div><div class="ur">Admin</div></div>
+      <svg class="lo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
   <main class="main">
-    <div class="crumb" id="crumb"><b>Overview</b> · Dashboard</div>
-
+    <div class="eyebrow">Alyson AI Software Factory · QA Agent</div>
 
     <!-- DASHBOARD -->
     <section class="screen show" id="dash">
-      <h1 class="title">Fleet health</h1>
-      <p class="sub">Real data from the one page run so far. Everything else shows a true empty state — no invented findings.</p>
+      <h1 class="title">QA Agent</h1>
+      <p class="sub">Runs unit tests, smoke tests, typecheck, lint, schema validation, and acceptance-criteria checks before merge — then re-verifies the deployed landing page live. Blocks merge until gates pass; fixes what it safely can; escalates the rest.</p>
+
       <div class="kpis">
-        <div class="card kpi"><div class="lbl">Pages run</div><div class="val">1 <small>/ fleet not yet swept</small></div></div>
-        <div class="card kpi"><div class="lbl">Deploy-ready</div><div class="val dng">0%</div></div>
-        <div class="card kpi"><div class="lbl">Open P0</div><div class="val dng">2</div></div>
-        <div class="card kpi"><div class="lbl">Human tasks</div><div class="val warn">3</div></div>
-        <div class="card kpi"><div class="lbl">Auto-fixes verified</div><div class="val ok">6</div></div>
+        <div class="card kpi"><div class="lbl">Pages run <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 22 8.5 12 15 2 8.5 12 2"/></svg></div><div class="val">1 <small>/ fleet not yet swept</small></div></div>
+        <div class="card kpi"><div class="lbl">Deploy-ready</div><div class="val dng">0%</div><div class="foot dng">2 open P0 on live</div></div>
+        <div class="card kpi"><div class="lbl">Open P0</div><div class="val dng">2</div><div class="foot">PII leak · session recorder</div></div>
+        <div class="card kpi"><div class="lbl">Human tasks</div><div class="val warn">3</div><div class="foot">auto-routed by area</div></div>
+        <div class="card kpi"><div class="lbl">Auto-fixes verified</div><div class="val ok">6</div><div class="foot ok">in PR, re-QA passed</div></div>
       </div>
-      <div class="banner dng"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex:none;margin-top:1px"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12" y2="17"/></svg><div><b>Deployment gap.</b> The 6 auto-fixes are verified in a PR but not yet deployed — the live page still leaks PII into the HomeLight redirect and runs a third-party session recorder. Fastest risk reduction is shipping the existing fix, not more engineering.</div></div>
+
+      <div class="banner dng"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12" y2="17"/></svg><div><b>Deployment gap.</b> The 6 auto-fixes are verified in a PR but not yet deployed — the live page still leaks PII into the HomeLight redirect and runs a third-party session recorder. Fastest risk reduction is shipping the existing fix, not more engineering.</div></div>
+
+      <div class="sec-h">The two phases the QA Agent runs on every page</div>
+      <div class="grid2">
+        <div class="card">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><b>Phase 1 — Pre-merge gates</b><span class="chip c-info">blocks merge</span></div>
+          <p class="kv" style="margin:6px 0 12px">Runs in CI on the pull request, before code can merge. The merge is blocked until every gate is green and acceptance criteria are confirmed.</p>
+          <div class="gaterow"><svg class="gi gpass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span class="gn">Unit tests</span><span class="gd">page JS logic in isolation</span></div>
+          <div class="gaterow"><svg class="gi gpass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span class="gn">Typecheck</span><span class="gd">TypeScript / type contracts</span></div>
+          <div class="gaterow"><svg class="gi gpass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span class="gn">Lint</span><span class="gd">style + correctness rules</span></div>
+          <div class="gaterow"><svg class="gi gpass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span class="gn">Schema validation</span><span class="gd">event payloads vs Zod</span></div>
+          <div class="gaterow"><svg class="gi gpass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span class="gn">Acceptance criteria</span><span class="gd">task done-when checks</span></div>
+        </div>
+        <div class="card">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><b>Phase 2 — Post-deploy live QA</b><span class="chip c-grey">verifies the deployed page</span></div>
+          <p class="kv" style="margin:6px 0 12px">Runs against the real URL after deploy. Starts with a fast smoke test, then deep methods. Tier is set per run (T0 read-only on prod; T2 synthetic-submit on staging).</p>
+          <div class="gaterow"><svg class="gi gskip" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="9"/></svg><span class="gn">Smoke test</span><span class="gd">loads · renders · CTA · no fatal error</span></div>
+          <div class="gaterow"><svg class="gi gskip" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="9"/></svg><span class="gn">Playwright E2E</span><span class="gd">drive the funnel end to end</span></div>
+          <div class="gaterow"><svg class="gi gskip" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="9"/></svg><span class="gn">Network + console</span><span class="gd">requests · trackers · runtime errors</span></div>
+          <div class="gaterow"><svg class="gi gskip" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="9"/></svg><span class="gn">Attribution + schema</span><span class="gd">tracking params · structured data</span></div>
+          <div class="gaterow"><svg class="gi gskip" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="9"/></svg><span class="gn">AI review</span><span class="gd">source + rendered DOM reasoning</span></div>
+        </div>
+      </div>
+
       <div class="sec-h">Template health</div>
       <table>
         <thead><tr><th style="width:30%">Template</th><th>Pages</th><th>Status</th><th>Shared open findings</th></tr></thead>
@@ -174,13 +267,14 @@
           <tr><td class="muted">calculator</td><td class="muted">0 run</td><td><span class="chip c-grey">Not yet run</span></td><td class="muted">—</td></tr>
         </tbody>
       </table>
+
       <div class="sec-h">Recent runs</div>
       <table>
-        <thead><tr><th style="width:40%">Run</th><th>Tier</th><th>Methods</th><th>Result</th></tr></thead>
+        <thead><tr><th style="width:40%">Run</th><th>Tier</th><th>Phase</th><th>Result</th></tr></thead>
         <tbody>
           <tr><td><a class="lnk" href="#" data-go="runs">2026-06-12-value-estimator-001</a></td>
             <td><span class="chip c-info">T0 read-only</span></td>
-            <td class="muted">AI review · live-DOM · network · console</td>
+            <td class="muted">Post-deploy live QA</td>
             <td><span class="chip c-dng">2 P0 · 2 P1 · 2 P2</span></td></tr>
         </tbody>
       </table>
@@ -190,23 +284,23 @@
     <section class="screen" id="pages">
       <h1 class="title">Pages — the fleet</h1>
       <p class="sub">Grouped by template. Per-page is a drill-in, not the default. Only run pages show results; the rest are honest "not yet run" rows.</p>
-      <div class="card" style="display:flex;gap:10px;align-items:center;margin-bottom:16px;flex-wrap:wrap;">
+      <div class="card" style="display:flex;gap:12px;align-items:center;margin-bottom:18px;flex-wrap:wrap;">
         <div style="flex:1;min-width:240px;">
-          <div style="font-weight:600;font-size:13px;">Add a page to QA</div>
-          <div class="kv" style="margin-top:2px;color:var(--t2);">Pages normally arrive automatically from the deploy webhook (Settings → Triggers). Use this only for an ad-hoc on-demand run.</div>
+          <div style="font-weight:700;font-size:14px;">Add a page to QA</div>
+          <div class="kv" style="margin-top:2px;">Pages normally arrive automatically from the deploy webhook (Triggers &amp; roles). Use this only for an ad-hoc on-demand run.</div>
         </div>
-        <input type="text" placeholder="https://…/page-slug" style="flex:1;min-width:220px;height:36px;border:1px solid var(--border);border-radius:var(--r);padding:0 12px;font-family:inherit;font-size:13px;color:var(--ink);background:var(--surface);">
+        <input type="text" placeholder="https://…/page-slug" style="flex:1;min-width:220px;height:40px;border:1px solid var(--border);border-radius:10px;padding:0 13px;font-family:inherit;font-size:13.5px;color:var(--ink);background:var(--surface);">
         <button class="btn btn-pri">Queue a run</button>
       </div>
       <table>
-        <thead><tr><th style="width:34%">Page</th><th>Template</th><th>Score</th><th>Methods</th><th>Open</th><th>Deploy-ready</th></tr></thead>
+        <thead><tr><th style="width:32%">Page</th><th>Template</th><th>Score</th><th>Methods</th><th>Open</th><th>Deploy-ready</th></tr></thead>
         <tbody>
           <tr class="tpl-row" data-tpl="ve"><td colspan="6"><span class="chev">▾</span> value-estimator · 1 page run · <span class="chip c-warn" style="margin-left:6px">Needs human</span></td></tr>
           <tr data-tpl="ve">
             <td>new-simple-address-value-estimator2025 <span class="chip c-info">reviewed</span></td>
             <td class="muted">value-estimator</td><td><b style="color:var(--warn)">68</b></td>
             <td><div class="methods">
-              <span class="chip c-ok">AI ✓</span><span class="chip c-ok">DOM ✓</span><span class="chip c-dng">Net ✗</span><span class="chip c-warn">Attr !</span><span class="chip c-grey">Schema –</span><span class="chip c-grey">API –</span>
+              <span class="chip c-dng">Smoke ✗</span><span class="chip c-dng">Unit ✗</span><span class="chip c-ok">AI ✓</span><span class="chip c-ok">E2E ✓</span><span class="chip c-dng">Net ✗</span><span class="chip c-warn">Attr !</span><span class="chip c-grey">Schema –</span>
             </div></td>
             <td><span style="color:var(--dng)">6</span></td>
             <td><span class="chip c-dng">No · 2 P0</span></td>
@@ -215,7 +309,7 @@
           <tr class="tpl-row"><td colspan="6"><span class="chev">▸</span> report-optin · <span class="muted">0 run</span> <span class="chip c-grey" style="margin-left:6px">Not yet run</span></td></tr>
         </tbody>
       </table>
-      <p class="legend">Method chips: AI review · live-DOM · Network · Attribution · Schema · API. ✓ pass · ✗ fail · ! warning · – not run.</p>
+      <p class="legend">Method chips: Smoke · Unit · AI review · Playwright E2E · Network · Attribution · Schema. ✓ pass · ✗ fail · ! warning · – not run.</p>
     </section>
 
     <!-- TEMPLATES -->
@@ -227,26 +321,59 @@
           <div><b>value-estimator</b> <span class="chip c-warn" style="margin-left:6px">3 template-level tasks</span></div>
           <button class="btn btn-pri">Fix once → re-verify all</button>
         </div>
-        <p class="kv" style="margin-top:10px">The three human-gated items (HomeLight handoff, consent_status, CSP enforcement) are template-level: resolving them at the template clears every page generated from it, then re-runs QA on each. Shown honestly with re-verification, never as a label.</p>
+        <p class="kv" style="margin-top:12px">The three human-gated items (HomeLight handoff, consent_status, CSP enforcement) are template-level: resolving them at the template clears every page generated from it, then re-runs QA on each. Shown honestly with re-verification, never as a label.</p>
+      </div>
+    </section>
+
+    <!-- TESTS & GATES -->
+    <section class="screen" id="tests">
+      <h1 class="title">Tests &amp; gates</h1>
+      <p class="sub">Exactly what the QA Agent executes on a landing page. Unit + smoke tests are first-class. Results below are from the value-estimator run — grounded in real evidence, no invented passes.</p>
+      <div class="banner info"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg><div><b>These tests are executable, not mocked.</b> A runnable harness (Node <span class="mono">--test</span> + jsdom) runs the unit + smoke suites against the real page source — latest run <b>15 / 15 pass</b>. It executes the documented before/after of the redirect builder (catches the PII leak, verifies the fix) and the missing <span class="mono">consent_status</span>. See <span class="mono">qa-agent-harness/</span>.</div></div>
+
+      <div class="sec-h">Unit tests — agent-generated against the page's JavaScript</div>
+      <div class="card">
+        <p class="kv" style="margin-bottom:10px">The agent reads the page's own JS (the redirect builder, validators, formatters) and synthesizes unit tests that assert each function's contract, then runs them in isolation. Failing assertions become findings.</p>
+        <div class="gaterow"><svg class="gi gfail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg><span class="gn">buildRedirectUrl() — no PII in outbound params</span><span class="gd gfail">FAIL · &amp;e/&amp;n carry base64 email + name</span></div>
+        <div class="gaterow"><svg class="gi gfail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg><span class="gn">consent_status — computed, never hardcoded</span><span class="gd gfail">FAIL · commented out / not derived from input</span></div>
+        <div class="gaterow"><svg class="gi gpass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span class="gn">isValidAddress() — rejects empty / malformed input</span><span class="gd gpass">PASS</span></div>
+        <div class="gaterow"><svg class="gi gpass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span class="gn">formatPhone() — normalizes to E.164</span><span class="gd gpass">PASS</span></div>
+        <p class="legend">Generated from the page's actual functions. The two failures map to findings F1 (PII in redirect) and the consent gap behind TASK-2.</p>
+      </div>
+
+      <div class="sec-h">Smoke test — fast post-deploy "is it on fire?" check</div>
+      <div class="card">
+        <p class="kv" style="margin-bottom:10px">Runs first, in seconds, right after deploy. A small set of shallow must-pass assertions that the page is alive and usable. If smoke fails, the deep methods still run but the page is flagged immediately.</p>
+        <div class="gaterow"><svg class="gi gpass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span class="gn">Page returns 200 and finishes loading</span><span class="gd gpass">PASS</span></div>
+        <div class="gaterow"><svg class="gi gpass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span class="gn">Hero + address input render</span><span class="gd gpass">PASS</span></div>
+        <div class="gaterow"><svg class="gi gpass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span class="gn">"Get estimate" CTA present + clickable</span><span class="gd gpass">PASS</span></div>
+        <div class="gaterow"><svg class="gi gfail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg><span class="gn">No fatal / repeating console errors</span><span class="gd gfail">FAIL · 939 repeating TypeError</span></div>
+        <div class="gaterow"><svg class="gi gpass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span class="gn">Primary assets + form endpoint reachable</span><span class="gd gpass">PASS</span></div>
+        <p class="legend">All checks grounded in the June 12 run. The console-error failure maps to finding F4 (P1, auto-fixable).</p>
       </div>
     </section>
 
     <!-- QA RUNS -->
     <section class="screen" id="runs">
       <h1 class="title">QA run · 2026-06-12-value-estimator-001</h1>
-      <p class="sub">new-simple-address-value-estimator2025 · production · <span class="chip c-info">T0 read-only</span> · the proven artifact: action → screenshot → network → console, PII redacted.</p>
+      <p class="sub">new-simple-address-value-estimator2025 · production · <span class="chip c-info">T0 read-only</span> · post-deploy live QA. The proven artifact: action → screenshot → network → console, PII redacted.</p>
       <div class="kpis">
-        <div class="card kpi"><div class="lbl">Tier</div><div class="val" style="font-size:18px">T0 · read-only</div></div>
-        <div class="card kpi"><div class="lbl">Methods</div><div class="val" style="font-size:14px;font-weight:500">AI review · live-DOM · network · console · source</div></div>
-        <div class="card kpi"><div class="lbl">Findings</div><div class="val dng" style="font-size:18px">2 P0 · 2 P1 · 2 P2</div></div>
-        <div class="card kpi"><div class="lbl">Deploy-ready</div><div class="val dng" style="font-size:18px">false</div></div>
+        <div class="card kpi"><div class="lbl">Tier</div><div class="val" style="font-size:20px">T0 · read-only</div></div>
+        <div class="card kpi"><div class="lbl">Smoke</div><div class="val dng" style="font-size:20px">Fail</div><div class="foot">console errors</div></div>
+        <div class="card kpi"><div class="lbl">Unit tests</div><div class="val dng" style="font-size:20px">2 / 4 fail</div><div class="foot">PII · consent</div></div>
+        <div class="card kpi"><div class="lbl">Findings</div><div class="val dng" style="font-size:20px">2 P0 · 2 P1 · 2 P2</div></div>
+        <div class="card kpi"><div class="lbl">Deploy-ready</div><div class="val dng" style="font-size:20px">false</div></div>
       </div>
       <div class="sec-h">Timeline (timeline.md / run.json)</div>
       <div class="card">
+        <div class="step"><div class="shot">00 · smoke</div><div>
+          <div class="act">Step 00 — Smoke test (fast gate)</div>
+          <div class="kv"><b>Pass:</b> 200, hero + address input + CTA render, assets reachable</div>
+          <div class="kv"><b>Fail:</b> repeating console TypeError storm<span class="tag">F4 · P1</span></div>
+        </div></div>
         <div class="step"><div class="shot">01 · landing</div><div>
           <div class="act">Step 01 — Navigate to page</div>
           <div class="kv"><b>Network:</b> trackers fire immediately — GA, LeadiD, Segment, Inspectlet</div>
-          <div class="kv"><b>Console:</b> errors already streaming</div>
           <div class="kv"><b>Finding:</b> <span class="sev p1">F3</span> no consent banner while trackers capture</div>
         </div></div>
         <div class="step"><div class="shot">02 · DOM</div><div>
@@ -263,9 +390,9 @@
           <div class="act">Step 04 — Capture console (939 messages)</div>
           <div class="kv">Repeating <span class="mono">TypeError … .apply is not a function</span> at home-value-estimator.js<span class="tag">F4 · P1</span></div>
         </div></div>
-        <div class="step"><div class="shot">05 · source</div><div>
-          <div class="act">Step 05 — Inspect source for redirect (no submit)</div>
-          <div class="kv">home-value-estimator.js: homelight ×14, encodeURIComponent ×11, base64; query built with <span class="mono">&e=&lt;base64 email&gt;&n=&lt;base64 name&gt;</span><span class="tag">F1 · P0</span></div>
+        <div class="step"><div class="shot">05 · unit + source</div><div>
+          <div class="act">Step 05 — Generate unit tests + inspect source (no submit)</div>
+          <div class="kv">Unit test on the redirect builder fails: query built with <span class="mono">&amp;e=&lt;base64 email&gt;&amp;n=&lt;base64 name&gt;</span><span class="tag">F1 · P0</span></div>
           <div class="kv muted">Evidence quotes structure, not decoded values. No form submitted on production.</div>
         </div></div>
       </div>
@@ -290,16 +417,17 @@
     <section class="screen" id="alerts">
       <h1 class="title">Alerts</h1>
       <p class="sub">Needs attention now — distinct from the Findings archive. New P0s and run failures also email the assigned owner.</p>
-      <div class="banner dng"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex:none;margin-top:1px"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12" y2="17"/></svg><div><b>P0 · live · PII in redirect URL.</b> Name + email base64-encoded into the HomeLight redirect on production. <a class="lnk" href="#" data-go="tasks">Open TASK-1 →</a></div></div>
-      <div class="banner dng"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex:none;margin-top:1px"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12" y2="17"/></svg><div><b>P0 · live · session recorder capturing form data.</b> Inspectlet POSTs field values pre-consent. <a class="lnk" href="#" data-go="tasks">Open TASK-2 →</a></div></div>
-      <div class="banner info"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex:none;margin-top:1px"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><div><b>Deployment gap.</b> 6 auto-fixes verified in PR, not deployed — live page unchanged since June 10. Acknowledge or convert to a deploy task.</div></div>
+      <div class="banner dng"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12" y2="17"/></svg><div><b>P0 · live · PII in redirect URL.</b> Name + email base64-encoded into the HomeLight redirect on production. <a class="lnk" href="#" data-go="tasks">Open TASK-1 →</a></div></div>
+      <div class="banner dng"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12" y2="17"/></svg><div><b>P0 · live · session recorder capturing form data.</b> Inspectlet POSTs field values pre-consent. <a class="lnk" href="#" data-go="tasks">Open TASK-2 →</a></div></div>
+      <div class="banner dng"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12" y2="17"/></svg><div><b>P1 · smoke test failed.</b> 939 repeating console TypeErrors on load (F4) — auto-fixable; queued in the PR.</div></div>
+      <div class="banner info"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><div><b>Deployment gap.</b> 6 auto-fixes verified in PR, not deployed — live page unchanged since June 10. Acknowledge or convert to a deploy task.</div></div>
     </section>
 
     <!-- TASKS -->
     <section class="screen" id="tasks">
       <h1 class="title">Tasks — human queue</h1>
       <p class="sub">Only what the agent can't safely resolve. One person, one task; auto-routed by area; resolving a task auto-triggers a re-QA. Separate from Pages.</p>
-      <div class="card" style="margin-bottom:14px"><div class="task-card">
+      <div class="card" style="margin-bottom:16px"><div class="task-card">
         <div>
           <div><span class="sev p0">P0</span> &nbsp;<b>TASK-1 — HomeLight handoff: close the PII leak + IDOR</b></div>
           <p class="kv" style="margin-top:6px">Define a safe server-to-server handoff so PII never sits in URL params, and confirm a cookie_id can only resolve its own lead.</p>
@@ -318,9 +446,9 @@
           <div class="row"><span>On resolve</span><span>auto re-QA</span></div>
         </div>
       </div></div>
-      <div class="card" style="margin-bottom:14px"><div class="task-card">
+      <div class="card" style="margin-bottom:16px"><div class="task-card">
         <div>
-          <div><span class="sev p0">P0</span> &nbsp;<b>TASK-2 — consent_status: define & wire TCPA/CCPA logic</b></div>
+          <div><span class="sev p0">P0</span> &nbsp;<b>TASK-2 — consent_status: define &amp; wire TCPA/CCPA logic</b></div>
           <p class="kv" style="margin-top:6px">Consent is commented out; hardcoding it true must never ship. Need the signed-off valid-consent rule and destination field.</p>
           <b style="font-size:12.5px">Done when</b>
           <ul class="done">
@@ -358,12 +486,12 @@
       </div></div>
     </section>
 
-    <!-- REPORTS / NA -->
+    <!-- REPORTS -->
     <section class="screen" id="reports"><h1 class="title">Reports</h1><p class="sub">Fleet rollups and trends. Empty until more pages are run — no invented data.</p><div class="card muted">No data yet. Run a fleet sweep to populate reports.</div></section>
 
     <!-- SETTINGS -->
     <section class="screen" id="settings">
-      <h1 class="title">Triggers & roles</h1>
+      <h1 class="title">Triggers &amp; roles</h1>
       <p class="sub">How a run starts on its own, and who hears about it. This is what turns on-demand QA into autonomous-on-deploy QA.</p>
 
       <div class="sec-h">Triggers — the deploy webhook</div>
@@ -372,15 +500,15 @@
           <div><b>Post-deploy webhook</b> <span class="chip c-grey" style="margin-left:6px">Not connected</span></div>
           <button class="btn btn-pri">Connect app.alyson.ai</button>
         </div>
-        <p class="kv" style="margin-top:10px;color:var(--t2)">When connected, app.alyson.ai fires an event the moment a page deploys and a run is enqueued automatically — no human in the loop. Requires: a signed endpoint, pipeline access to register the hook, an HMAC secret, the trigger contract below, and an idempotency key.</p>
+        <p class="kv" style="margin-top:10px">When connected, app.alyson.ai fires an event the moment a page deploys and a run is enqueued automatically — no human in the loop. Requires: a signed endpoint, pipeline access to register the hook, an HMAC secret, the trigger contract below, and an idempotency key.</p>
         <div class="ownerbox" style="margin-top:10px">
           <div class="row"><span>Endpoint</span><b>POST /hooks/deploy</b></div>
           <div class="row"><span>Signing secret (HMAC)</span><b style="color:var(--warn)">Not set</b></div>
           <div class="row"><span>Last event received</span><b class="muted">—</b></div>
           <div class="row"><span>Idempotency key</span><b>deploy_id</b></div>
         </div>
-        <p class="kv" style="margin-top:12px;font-weight:600">Trigger contract (deploy-event payload)</p>
-        <pre style="margin:6px 0 0;padding:12px;background:var(--canvas);border:1px solid var(--border);border-radius:var(--r);font-size:12px;overflow:auto;color:var(--t2)">event:        "page.deployed"
+        <p class="kv" style="margin-top:14px;font-weight:600">Trigger contract (deploy-event payload)</p>
+        <pre>event:        "page.deployed"
 page_url:     "https://…/&lt;slug&gt;"
 environment:  "staging" | "production"   → selects tier (prod: T0/T1 · staging: up to T2)
 template_id:  "value-estimator"          → fan-out + owner fallback
@@ -391,25 +519,25 @@ signature:    HMAC over the body         → authenticity</pre>
         <p class="legend">Status: demand-only today. The contract is the single missing piece for "QA starts itself." Auto-fix + routing still need repo/PR, vault, and alerting grants. Production deploy stays human-gated by design.</p>
       </div>
 
-      <div class="card" style="margin-top:12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-        <div style="flex:1;min-width:240px;"><b style="font-size:13px">Manual run (on-demand path)</b><div class="kv" style="color:var(--t2)">Always available alongside the webhook — paste a URL to queue a run now.</div></div>
-        <input type="text" placeholder="https://…/page-slug" style="flex:1;min-width:220px;height:36px;border:1px solid var(--border);border-radius:var(--r);padding:0 12px;font-family:inherit;font-size:13px;color:var(--ink);background:var(--surface);">
+      <div class="card" style="margin-top:14px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+        <div style="flex:1;min-width:240px;"><b style="font-size:14px">Manual run (on-demand path)</b><div class="kv">Always available alongside the webhook — paste a URL to queue a run now.</div></div>
+        <input type="text" placeholder="https://…/page-slug" style="flex:1;min-width:220px;height:40px;border:1px solid var(--border);border-radius:10px;padding:0 13px;font-family:inherit;font-size:13.5px;color:var(--ink);background:var(--surface);">
         <button class="btn btn-pri">Queue a run</button>
       </div>
-      <div class="card" style="margin-top:12px;"><b style="font-size:13px">Scheduled sweep</b><div class="kv" style="color:var(--t2);margin-top:2px">Re-QA the whole fleet on a cadence — catches regressions between deploys. <span class="chip c-grey" style="margin-left:4px">Off</span></div></div>
+      <div class="card" style="margin-top:14px;"><b style="font-size:14px">Scheduled sweep</b><div class="kv" style="margin-top:2px">Re-QA the whole fleet on a cadence — catches regressions between deploys. <span class="chip c-grey" style="margin-left:4px">Off</span></div></div>
 
-      <div class="sec-h" style="margin-top:22px">Roles & notification routing</div>
-      <div class="banner info"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex:none;margin-top:1px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="8"/></svg><div>The page itself never reveals who built it — the June 12 page exposed no author. Owner comes from app.alyson.ai's record via the deploy event, not from scraping the page.</div></div>
+      <div class="sec-h" style="margin-top:26px">Roles &amp; notification routing</div>
+      <div class="banner info"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="8"/></svg><div>The page itself never reveals who built it — the June 12 page exposed no author. Owner comes from app.alyson.ai's record via the deploy event, not from scraping the page.</div></div>
       <table>
         <thead><tr><th style="width:24%">Recipient</th><th>Source</th><th>Gets emailed</th></tr></thead>
         <tbody>
-          <tr><td><b>Page owner</b></td><td>Deploy-event <code>owner</code> → template-owner default → admin override (editable in UI)</td><td>Every completed run for their pages</td></tr>
+          <tr><td><b>Page owner</b></td><td>Deploy-event <span class="mono">owner</span> → template-owner default → admin override (editable in UI)</td><td>Every completed run for their pages</td></tr>
           <tr><td><b>Admins / QA channel</b></td><td>Org-level list, set once here (not per page)</td><td>Daily digest + immediate P0 escalation, fleet-wide</td></tr>
           <tr><td><b>Security / legal</b></td><td>Org-level distribution list, set once here</td><td>Auto-CC on P0 security/privacy findings only</td></tr>
         </tbody>
       </table>
-      <div class="card" style="margin-top:12px;">
-        <b style="font-size:13px">Template → owner map (owner fallback)</b>
+      <div class="card" style="margin-top:14px;">
+        <b style="font-size:14px">Template → owner map (owner fallback)</b>
         <div class="ownerbox" style="margin-top:8px">
           <div class="row"><span>value-estimator</span><b class="muted">unassigned — routed by area until set</b></div>
           <div class="row"><span>cash-offer</span><b class="muted">unassigned</b></div>
@@ -419,24 +547,67 @@ signature:    HMAC over the body         → authenticity</pre>
       </div>
     </section>
 
-    <section class="screen" id="na"><h1 class="title">Section</h1><p class="sub">Part of the shell contract (Data · Experimentation). Not in scope for this prototype.</p></section>
-
   </main>
+
+  <!-- CHAT PANEL -->
+  <aside class="chat" id="chat">
+    <div class="chat-rail">
+      <button class="rail-btn" id="railExpand" title="Expand Alyson AI"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <svg class="rail-spark" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2"><path d="M12 3l1.9 4.6L18.5 9.5 13.9 11.4 12 16l-1.9-4.6L5.5 9.5l4.6-1.9z"/></svg>
+      <div class="rail-label">ALYSON</div>
+    </div>
+
+    <div class="chat-full">
+      <div class="chat-head">
+        <svg class="ai-spark" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2"><path d="M12 3l1.9 4.6L18.5 9.5 13.9 11.4 12 16l-1.9-4.6L5.5 9.5l4.6-1.9z"/></svg>
+        <span class="ai-name">Alyson AI</span>
+        <div class="acts">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" title="New chat"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" title="Clear"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" title="Expand"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+          <svg id="chatCollapse" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" title="Collapse"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+      </div>
+      <div class="chat-ctx">
+        <svg class="gl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        <span>General</span>
+        <span class="addc">+ Context</span>
+      </div>
+      <div class="chat-body">
+        <div class="msg">
+          <div class="mav"><svg viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2"><path d="M12 3l1.9 4.6L18.5 9.5 13.9 11.4 12 16l-1.9-4.6L5.5 9.5l4.6-1.9z"/></svg></div>
+          <div class="bub">I'm ready to help you plan and execute. What would you like to work on?</div>
+        </div>
+      </div>
+      <div class="recent">
+        <div class="rl">Recent</div>
+        <div class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>value-estimator T0 run</div>
+        <div class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Deployment gap — 6 fixes in PR</div>
+        <div class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>CSP enforcement rollout</div>
+      </div>
+      <div class="chat-input">
+        <input type="text" placeholder="Ask Alyson anything...">
+        <button class="send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+      </div>
+    </div>
+  </aside>
+
 </div>
 
 <script>
 // nav switching
-var crumbMap={dash:'<b>Overview</b> · Dashboard',pages:'<b>Pages</b> · Pages',templates:'<b>Pages</b> · Templates',
-  runs:'<b>Quality</b> · QA runs',findings:'<b>Quality</b> · Findings',alerts:'<b>Quality</b> · Alerts',
-  tasks:'<b>Work</b> · Tasks',reports:'<b>Analytics</b> · Reports',settings:'<b>Settings</b> · Triggers & roles',na:'<b>Settings</b>'};
 function go(s){
   document.querySelectorAll('.screen').forEach(function(e){e.classList.toggle('show',e.id===s);});
-  document.querySelectorAll('.nav').forEach(function(n){n.classList.toggle('active',n.dataset.s===s);});
-  document.getElementById('crumb').innerHTML=crumbMap[s]||'';
+  document.querySelectorAll('.nav[data-s]').forEach(function(n){n.classList.toggle('active',n.dataset.s===s);});
   document.querySelector('.main').scrollTop=0;
 }
-document.querySelectorAll('.nav').forEach(function(n){n.onclick=function(){go(n.dataset.s);};});
+document.querySelectorAll('.nav[data-s]').forEach(function(n){n.onclick=function(){go(n.dataset.s);};});
 document.querySelectorAll('[data-go]').forEach(function(a){a.onclick=function(e){e.preventDefault();go(a.dataset.go);};});
+
+// chat collapse / expand
+var app=document.getElementById('app');
+document.getElementById('chatCollapse').onclick=function(){app.classList.add('chat-collapsed');};
+document.getElementById('railExpand').onclick=function(){app.classList.remove('chat-collapsed');};
 
 // findings data (REAL — from the run + source review)
 var F=[
@@ -445,7 +616,7 @@ var F=[
   {s:'p0',d:'Security',t:'No security response headers on a PII-collecting funnel',r:'fixed',rc:'c-info',rl:'Auto-fixed (PR)',o:'Frontend'},
   {s:'p1',d:'Compliance',t:'No consent banner / consent_status commented out',r:'gated',rc:'c-warn',rl:'Human-gated',o:'Legal'},
   {s:'p1',d:'Security',t:'Console / cookie_id leakage (32 calls) to the browser console',r:'fixed',rc:'c-info',rl:'Auto-fixed (PR)',o:'Frontend'},
-  {s:'p1',d:'Functional',t:'Repeating runtime TypeError in jQuery event layer (939 msgs)',r:'open',rc:'c-dng',rl:'Open · auto-fixable',o:'Frontend'},
+  {s:'p1',d:'Functional',t:'Repeating runtime TypeError in jQuery event layer (939 msgs) — smoke-test fail',r:'open',rc:'c-dng',rl:'Open · auto-fixable',o:'Frontend'},
   {s:'p1',d:'Functional',t:'Zero data-testid hooks (Playwright forced onto brittle selectors)',r:'fixed',rc:'c-info',rl:'Auto-fixed (PR)',o:'Frontend'},
   {s:'p1',d:'Security',t:'No enforced CSP (report-only added; allowlist needed)',r:'gated',rc:'c-warn',rl:'Human-gated',o:'Security'},
   {s:'p2',d:'Accessibility',t:'Pinch-zoom disabled (user-scalable=0, WCAG 1.4.4)',r:'fixed',rc:'c-info',rl:'Auto-fixed (PR)',o:'Frontend'},
