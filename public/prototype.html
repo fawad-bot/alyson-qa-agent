@@ -20,6 +20,10 @@
   body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     background:var(--canvas);color:var(--ink);font-size:14px;line-height:1.5;
     font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased;display:flex;flex-direction:column;height:100vh;}
+  /* os titlebar */
+  .titlebar{height:34px;background:#0a0a0b;flex:none;display:flex;align-items:center;padding:0 14px;gap:8px;}
+  .traffic{width:11px;height:11px;border-radius:50%;}
+  .t-r{background:#ff5f57;} .t-y{background:#febc2e;} .t-g{background:#28c840;}
   /* app grid */
   .app{flex:1;display:grid;grid-template-columns:248px 1fr var(--chatw);min-height:0;transition:grid-template-columns .18s ease;}
   .app.chat-collapsed{--chatw:50px;}
@@ -53,8 +57,8 @@
   .eyebrow{font-size:12px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--primary);margin-bottom:8px;}
   .screen{display:none;max-width:1120px;}
   .screen.show{display:block;}
-  h1.title{font-size:24px;font-weight:700;letter-spacing:-.02em;margin:0 0 6px;line-height:32px;}
-  .sub{color:var(--t2);font-size:14px;font-weight:400;margin:0 0 24px;max-width:760px;line-height:20px;}
+  h1.title{font-size:30px;font-weight:700;letter-spacing:-.02em;margin:0 0 6px;line-height:1.15;}
+  .sub{color:var(--t2);font-size:15px;margin:0 0 24px;max-width:760px;}
   /* cards / kpi */
   .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:16px;margin-bottom:22px;}
   .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px;}
@@ -151,6 +155,7 @@
 </style>
 </head>
 <body>
+<div class="titlebar"><span class="traffic t-r"></span><span class="traffic t-y"></span><span class="traffic t-g"></span></div>
 <div class="app" id="app">
 
   <!-- SIDEBAR -->
@@ -180,12 +185,13 @@
         </g>
       </svg>
       <div class="name">Alyson</div>
-      <svg class="gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      <svg class="gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-2.82 1.17V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 8 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 3.6 14H3.5a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 5 8.6a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 3.6h.09A1.65 1.65 0 0 0 12 2.6a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 2.82 1.17l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 20.4 9v.09a2 2 0 0 1 0 4z"/></svg>
     </div>
 
     <nav class="nav-scroll" id="side">
       <div class="grp">Overview</div>
       <button class="nav active" data-s="dash"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Dashboard</span></button>
+      <button class="nav" data-s="agents"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/></svg><span>Agents</span></button>
 
       <div class="grp">Pages</div>
       <button class="nav" data-s="pages"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 22 8.5 12 15 2 8.5 12 2"/><polyline points="2 15.5 12 22 22 15.5"/></svg><span>Pages</span><span class="count">1 run</span></button>
@@ -201,7 +207,7 @@
       <button class="nav" data-s="tasks"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg><span>Tasks</span><span class="count">3</span></button>
 
       <div class="grp">Configuration</div>
-      <button class="nav" data-s="settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span>Triggers &amp; roles</span></button>
+      <button class="nav" data-s="settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-2.82 1.17V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 8 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 3.6 14H3.5a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 5 8.6a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 3.6h.09A1.65 1.65 0 0 0 12 2.6a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 2.82 1.17l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 20.4 9v.09a2 2 0 0 1 0 4z"/></svg><span>Triggers &amp; roles</span></button>
     </nav>
 
     <div class="usercard">
@@ -249,10 +255,10 @@
           <div class="gaterow"><svg class="gi gskip" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="9"/></svg><span class="gn">Network + console</span><span class="gd">requests · trackers · runtime errors</span></div>
           <div class="gaterow"><svg class="gi gskip" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="9"/></svg><span class="gn">Attribution + schema</span><span class="gd">tracking params · structured data</span></div>
           <div class="gaterow"><svg class="gi gskip" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="9"/></svg><span class="gn">AI review</span><span class="gd">source + rendered DOM reasoning</span></div>
-          <div class="gaterow"><svg class="gi gskip" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="9"/></svg><span class="gn">MCP Browser Agent</span><span class="gd">Claude/GPT/Gemini drives the live page via MCP</span></div>
-          <div class="gaterow"><svg class="gi gskip" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="9"/></svg><span class="gn">Video QA</span><span class="gd">screen-record the run · AI reviews the footage</span></div>
         </div>
       </div>
+
+      <div class="banner info" style="margin-top:18px"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="8"/></svg><div><b>Phase 1 execution engine: the MCP browser agent</b> — Claude → MCP → Chrome, run on the Mac. It's the proven engine (it produced the June 12 run), needs no backend changes at T0/T1, and is what we launch on. Phase 2 relocates the same engine to an ephemeral cloud worker; Phase 3 adds T2 synthetic-submit on staging.</div></div>
 
       <div class="sec-h">Template health</div>
       <table>
@@ -275,6 +281,41 @@
             <td><span class="chip c-dng">2 P0 · 2 P1 · 2 P2</span></td></tr>
         </tbody>
       </table>
+    </section>
+
+    <!-- AGENTS (two deployable runtimes) -->
+    <section class="screen" id="agents">
+      <h1 class="title">Agents</h1>
+      <p class="sub">The QA strategies grouped by how they deploy and run in the backend — two runtimes, each hosting several agents with distinct roles, plus a gate on top. This is the deployable shape, not 15 loose strategies.</p>
+
+      <div class="grid2">
+        <div class="card">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><b>Group 1 — Code review infra</b><span class="chip c-info">static · on PR</span></div>
+          <p class="kv" style="margin:6px 0 12px">GitHub-connected. On each pull request, an orchestrator spins a Claude Code / Cursor instance with the repo + attached context (schema/type guidelines, security policy) and posts review comments + a blocking check.</p>
+          <div class="gaterow"><span class="gn">Static / AST validation</span><span class="gd"><span class="chip c-warn">Partial</span></span></div>
+          <div class="gaterow"><span class="gn">AI code review</span><span class="gd"><span class="chip c-ok">In use</span></span></div>
+          <div class="gaterow"><span class="gn">Schema &amp; type validation</span><span class="gd"><span class="chip c-warn">Partial</span></span></div>
+          <div class="gaterow"><span class="gn">Security — via Vercel deepsec</span><span class="gd"><span class="chip c-ok">In use</span></span></div>
+          <div class="gaterow"><span class="gn">Test authoring / coverage</span><span class="gd"><span class="chip c-info">ref: CodeRabbit · TestSprite · Greptile</span></span></div>
+        </div>
+        <div class="card">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><b>Group 2 — Performing actions infra</b><span class="chip c-grey">browser · MCP + Playwright</span></div>
+          <p class="kv" style="margin:6px 0 12px">One runtime: headless Chrome + MCP + Playwright (browser-MCP and Playwright both automate the browser). Hosts the action agents that click, submit, and validate against the running page.</p>
+          <div class="gaterow"><span class="gn">MCP browser agent <span class="chip c-info">Phase 1 engine</span></span><span class="gd"><span class="chip c-ok">In use</span></span></div>
+          <div class="gaterow"><span class="gn">Playwright + event validation</span><span class="gd"><span class="chip c-info">Planned</span></span></div>
+          <div class="gaterow"><span class="gn">AI Playwright coverage review</span><span class="gd"><span class="chip c-warn">Partial</span></span></div>
+          <div class="gaterow"><span class="gn">Component presence</span><span class="gd"><span class="chip c-ok">In use</span></span></div>
+          <div class="gaterow"><span class="gn">Legal &amp; compliance (runtime)</span><span class="gd"><span class="chip c-warn">Partial</span></span></div>
+          <div class="gaterow"><span class="gn">Accessibility</span><span class="gd"><span class="chip c-warn">Partial</span></span></div>
+          <div class="gaterow"><span class="gn">Conversion · Visual · Session replay · Video</span><span class="gd"><span class="chip c-grey">Planned / not used</span></span></div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:16px;display:flex;align-items:flex-start;gap:11px;">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" style="flex:none;margin-top:2px"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+        <div><b>Deployment gate agent</b> <span class="chip c-warn" style="margin-left:4px">Partial</span><div class="kv" style="margin-top:4px">Not an executor — the gate that consumes both groups' results to set the advisory deploy-ready flag (zero open P0 + passing re-QA), then hands a green PR to the Deployment Agent. Production deploy stays human-gated.</div></div>
+      </div>
+      <p class="legend">Event-contract validation spans both groups: schema/type checks live in Group 1, API validation in Group 2. Phase 1 stands up Group 2 first (the proven MCP browser agent on the Mac); Group 1 is the natural next build — it needs only GitHub + an orchestrator, no browser.</p>
     </section>
 
     <!-- PAGES -->
@@ -353,7 +394,7 @@
     <!-- QA RUNS -->
     <section class="screen" id="runs">
       <h1 class="title">QA run · 2026-06-12-value-estimator-001</h1>
-      <p class="sub">new-simple-address-value-estimator2025 · production · <span class="chip c-info">T0 read-only</span> · post-deploy live QA. The proven artifact: action → screenshot → network → console, PII redacted.</p>
+      <p class="sub">new-simple-address-value-estimator2025 · production · <span class="chip c-info">T0 read-only</span> · post-deploy live QA. Engine: <b>MCP browser agent (Claude → MCP → Chrome)</b>, run on the Mac. The proven artifact: action → screenshot → network → console, PII redacted.</p>
       <div class="kpis">
         <div class="card kpi"><div class="lbl">Tier</div><div class="val" style="font-size:20px">T0 · read-only</div></div>
         <div class="card kpi"><div class="lbl">Smoke</div><div class="val dng" style="font-size:20px">Fail</div><div class="foot">console errors</div></div>
