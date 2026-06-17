@@ -16,7 +16,7 @@ import { toast } from "sonner";
 const runsOpts = () => queryOptions({ queryKey: ["runs"], queryFn: () => listRuns(), refetchInterval: 2000 });
 const tgtsOpts = () => queryOptions({ queryKey: ["targets"], queryFn: () => listTargets() });
 
-export const Route = createFileRoute("/_authenticated/_app/runs")({
+export const Route = createFileRoute("/_authenticated/_app/runs/")({
   loader: ({ context }) => {
     context.queryClient.ensureQueryData(runsOpts());
     context.queryClient.ensureQueryData(tgtsOpts());
