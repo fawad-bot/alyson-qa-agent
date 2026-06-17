@@ -68,7 +68,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       <Toaster />
       <aside className="w-[248px] shrink-0 bg-surface border-r border-border flex flex-col">
         <div className="px-5 py-4 border-b border-border flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-primary text-white grid place-items-center text-xs font-bold">A</div>
+          <img src={alysonLogo.url} alt="Alyson" className="w-7 h-7 rounded-lg object-cover" />
           <div className="font-semibold text-[15px]">Alyson</div>
           <Settings className="ml-auto w-4 h-4 text-t3" />
         </div>
