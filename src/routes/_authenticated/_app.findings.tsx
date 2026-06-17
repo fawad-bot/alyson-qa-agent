@@ -1,11 +1,12 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
-import { listFindings, updateFindingStatus } from "@/lib/qa/findings.functions";
+import { listFindings, updateFindingStatus, createFixTaskFromFinding } from "@/lib/qa/findings.functions";
 import { PageHeader } from "@/components/qa/AppShell";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
+import { Wrench } from "lucide-react";
 import { toast } from "sonner";
 
 const opts = () => queryOptions({ queryKey: ["findings"], queryFn: () => listFindings() });
@@ -32,12 +33,25 @@ const STATUS_COLOR: Record<string, string> = {
 function Findings() {
   const { data } = useSuspenseQuery(opts());
   const qc = useQueryClient();
+  const navigate = useNavigate();
   const upd = useServerFn(updateFindingStatus);
+  const mkTask = useServerFn(createFixTaskFromFinding);
   const [selected, setSelected] = useState<any>(null);
 
   const updMut = useMutation({
     mutationFn: (v: { id: string; status: any }) => upd({ data: v }),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["findings"] }); toast.success("Updated"); },
+  });
+  const taskMut = useMutation({
+    mutationFn: (finding_id: string) => mkTask({ data: { finding_id } }),
+    onSuccess: (r) => {
+      qc.invalidateQueries({ queryKey: ["findings"] });
+      qc.invalidateQueries({ queryKey: ["fix-tasks"] });
+      toast.success(r.existed ? "Fix task already exists" : "Fix task created");
+      setSelected(null);
+      navigate({ to: "/fix-tasks" });
+    },
+    onError: (e: Error) => toast.error(e.message),
   });
 
   return (
@@ -81,9 +95,12 @@ function Findings() {
                 <div><div className="text-eyebrow mb-1">What happened</div><div className="text-[13.5px] leading-relaxed text-t2">{selected.description ?? "—"}</div></div>
                 <div className="card-surface bg-ok-bg/40 border-ok/20">
                   <div className="text-eyebrow mb-1" style={{ color: "var(--ok)" }}>Suggested fix</div>
-                  <div className="text-[13px] text-t2">Alyson can open a fix task and route this to engineering. Auto-fix proposal coming in the next phase.</div>
+                  <div className="text-[13px] text-t2">Open a fix task to route this to engineering. Severity-based priority and human-review flags are set automatically.</div>
                 </div>
-                <div className="flex gap-2 pt-2">
+                <div className="flex gap-2 pt-2 flex-wrap">
+                  <Button size="sm" onClick={() => taskMut.mutate(selected.id)} disabled={taskMut.isPending}>
+                    <Wrench className="w-3.5 h-3.5 mr-1.5" />Create fix task
+                  </Button>
                   <Button size="sm" variant="outline" onClick={() => updMut.mutate({ id: selected.id, status: "acknowledged" })}>Acknowledge</Button>
                   <Button size="sm" variant="outline" onClick={() => updMut.mutate({ id: selected.id, status: "resolved" })}>Resolve</Button>
                   <Button size="sm" variant="ghost" onClick={() => updMut.mutate({ id: selected.id, status: "ignored" })}>Ignore</Button>
