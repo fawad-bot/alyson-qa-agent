@@ -69,16 +69,17 @@ function Evidence() {
             <>
               <SheetHeader><SheetTitle>{selected.title}</SheetTitle></SheetHeader>
               <div className="mt-4 space-y-4">
-                <div className="aspect-video bg-canvas rounded-lg flex items-center justify-center border border-border overflow-hidden">
-                  {selected.kind === "screenshot" && (selected.url ?? selected.payload?.url) ? (
-                    <img
-                      src={selected.url ?? selected.payload?.url}
-                      alt={selected.title}
-                      className="w-full h-full object-contain"
-                      onError={(ev) => { (ev.currentTarget as HTMLImageElement).style.display = "none"; }}
-                    />
+                <div className="aspect-video bg-canvas rounded-lg flex flex-col items-center justify-center border border-border overflow-hidden">
+                  {selected.kind === "screenshot" && selected.url ? (
+                    <img src={selected.url} alt={selected.title} className="w-full h-full object-contain" />
                   ) : (
-                    <Icon className="w-16 h-16 text-t3" />
+                    <>
+                      <Icon className="w-12 h-12 text-t3 mb-2" />
+                      <span className="text-[12px] text-t2">No asset captured yet</span>
+                      <span className="text-[11px] text-t3 mt-1 px-6 text-center">
+                        Browser capture requires an external runner (e.g. Browserless, Playwright worker). None is connected.
+                      </span>
+                    </>
                   )}
                 </div>
                 <div className="flex gap-2 flex-wrap">
