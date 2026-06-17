@@ -70,8 +70,17 @@ function Evidence() {
             <>
               <SheetHeader><SheetTitle>{selected.title}</SheetTitle></SheetHeader>
               <div className="mt-4 space-y-4">
-                <div className="aspect-video bg-canvas rounded-lg flex items-center justify-center border border-border">
-                  <Icon className="w-16 h-16 text-t3" />
+                <div className="aspect-video bg-canvas rounded-lg flex items-center justify-center border border-border overflow-hidden">
+                  {selected.kind === "screenshot" && (selected.url ?? selected.payload?.url) ? (
+                    <img
+                      src={selected.url ?? selected.payload?.url}
+                      alt={selected.title}
+                      className="w-full h-full object-contain"
+                      onError={(ev) => { (ev.currentTarget as HTMLImageElement).style.display = "none"; }}
+                    />
+                  ) : (
+                    <Icon className="w-16 h-16 text-t3" />
+                  )}
                 </div>
                 <div className="flex gap-2 flex-wrap">
                   <span className="text-[11px] font-semibold px-2 py-0.5 rounded uppercase bg-primary-weak text-primary">{selected.kind}</span>
