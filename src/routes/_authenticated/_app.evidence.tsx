@@ -35,19 +35,18 @@ function Evidence() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {data.map((e: any) => {
             const CardIcon = KIND_ICON[e.kind] ?? FileText;
-            const thumb = e.kind === "screenshot" ? (e.url ?? e.payload?.url ?? e.payload?.thumbnail) : null;
+            const thumb = e.kind === "screenshot" && e.url ? e.url : null;
+            const pending = !e.url;
             return (
               <button key={e.id} data-testid="evidence-card" onClick={() => setSelected(e)} className="card-surface text-left hover:border-primary/40 transition-colors">
-                <div className="aspect-video bg-canvas rounded-lg flex items-center justify-center mb-3 border border-border overflow-hidden">
+                <div className="aspect-video bg-canvas rounded-lg flex flex-col items-center justify-center mb-3 border border-border overflow-hidden">
                   {thumb ? (
-                    <img
-                      src={thumb}
-                      alt={e.title}
-                      className="w-full h-full object-cover"
-                      onError={(ev) => { (ev.currentTarget as HTMLImageElement).style.display = "none"; }}
-                    />
+                    <img src={thumb} alt={e.title} className="w-full h-full object-cover" />
                   ) : (
-                    <CardIcon className="w-10 h-10 text-t3" />
+                    <>
+                      <CardIcon className="w-8 h-8 text-t3 mb-1" />
+                      {pending && <span className="text-[10px] uppercase tracking-wider text-t3">Capture pending</span>}
+                    </>
                   )}
                 </div>
                 <div className="flex items-center gap-2 mb-1">
