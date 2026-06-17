@@ -31,6 +31,7 @@ import { Route as AuthenticatedAppDashboardRouteImport } from './routes/_authent
 import { Route as AuthenticatedAppCredentialsRouteImport } from './routes/_authenticated/_app.credentials'
 import { Route as AuthenticatedAppAutoFixRouteImport } from './routes/_authenticated/_app.auto-fix'
 import { Route as AuthenticatedAppAlertsRouteImport } from './routes/_authenticated/_app.alerts'
+import { Route as AuthenticatedAppRunsIdRouteImport } from './routes/_authenticated/_app.runs.$id'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
@@ -150,6 +151,11 @@ const AuthenticatedAppAlertsRoute = AuthenticatedAppAlertsRouteImport.update({
   path: '/alerts',
   getParentRoute: () => AuthenticatedAppRoute,
 } as any)
+const AuthenticatedAppRunsIdRoute = AuthenticatedAppRunsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AuthenticatedAppRunsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -167,11 +173,12 @@ export interface FileRoutesByFullPath {
   '/integrations': typeof AuthenticatedAppIntegrationsRoute
   '/personas': typeof AuthenticatedAppPersonasRoute
   '/reports': typeof AuthenticatedAppReportsRoute
-  '/runs': typeof AuthenticatedAppRunsRoute
+  '/runs': typeof AuthenticatedAppRunsRouteWithChildren
   '/settings': typeof AuthenticatedAppSettingsRoute
   '/suites': typeof AuthenticatedAppSuitesRoute
   '/targets': typeof AuthenticatedAppTargetsRoute
   '/triggers': typeof AuthenticatedAppTriggersRoute
+  '/runs/$id': typeof AuthenticatedAppRunsIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -189,11 +196,12 @@ export interface FileRoutesByTo {
   '/integrations': typeof AuthenticatedAppIntegrationsRoute
   '/personas': typeof AuthenticatedAppPersonasRoute
   '/reports': typeof AuthenticatedAppReportsRoute
-  '/runs': typeof AuthenticatedAppRunsRoute
+  '/runs': typeof AuthenticatedAppRunsRouteWithChildren
   '/settings': typeof AuthenticatedAppSettingsRoute
   '/suites': typeof AuthenticatedAppSuitesRoute
   '/targets': typeof AuthenticatedAppTargetsRoute
   '/triggers': typeof AuthenticatedAppTriggersRoute
+  '/runs/$id': typeof AuthenticatedAppRunsIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -214,11 +222,12 @@ export interface FileRoutesById {
   '/_authenticated/_app/integrations': typeof AuthenticatedAppIntegrationsRoute
   '/_authenticated/_app/personas': typeof AuthenticatedAppPersonasRoute
   '/_authenticated/_app/reports': typeof AuthenticatedAppReportsRoute
-  '/_authenticated/_app/runs': typeof AuthenticatedAppRunsRoute
+  '/_authenticated/_app/runs': typeof AuthenticatedAppRunsRouteWithChildren
   '/_authenticated/_app/settings': typeof AuthenticatedAppSettingsRoute
   '/_authenticated/_app/suites': typeof AuthenticatedAppSuitesRoute
   '/_authenticated/_app/targets': typeof AuthenticatedAppTargetsRoute
   '/_authenticated/_app/triggers': typeof AuthenticatedAppTriggersRoute
+  '/_authenticated/_app/runs/$id': typeof AuthenticatedAppRunsIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -243,6 +252,7 @@ export interface FileRouteTypes {
     | '/suites'
     | '/targets'
     | '/triggers'
+    | '/runs/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -265,6 +275,7 @@ export interface FileRouteTypes {
     | '/suites'
     | '/targets'
     | '/triggers'
+    | '/runs/$id'
   id:
     | '__root__'
     | '/'
@@ -289,6 +300,7 @@ export interface FileRouteTypes {
     | '/_authenticated/_app/suites'
     | '/_authenticated/_app/targets'
     | '/_authenticated/_app/triggers'
+    | '/_authenticated/_app/runs/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -453,8 +465,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppAlertsRouteImport
       parentRoute: typeof AuthenticatedAppRoute
     }
+    '/_authenticated/_app/runs/$id': {
+      id: '/_authenticated/_app/runs/$id'
+      path: '/$id'
+      fullPath: '/runs/$id'
+      preLoaderRoute: typeof AuthenticatedAppRunsIdRouteImport
+      parentRoute: typeof AuthenticatedAppRunsRoute
+    }
   }
 }
+
+interface AuthenticatedAppRunsRouteChildren {
+  AuthenticatedAppRunsIdRoute: typeof AuthenticatedAppRunsIdRoute
+}
+
+const AuthenticatedAppRunsRouteChildren: AuthenticatedAppRunsRouteChildren = {
+  AuthenticatedAppRunsIdRoute: AuthenticatedAppRunsIdRoute,
+}
+
+const AuthenticatedAppRunsRouteWithChildren =
+  AuthenticatedAppRunsRoute._addFileChildren(AuthenticatedAppRunsRouteChildren)
 
 interface AuthenticatedAppRouteChildren {
   AuthenticatedAppAlertsRoute: typeof AuthenticatedAppAlertsRoute
@@ -470,7 +500,7 @@ interface AuthenticatedAppRouteChildren {
   AuthenticatedAppIntegrationsRoute: typeof AuthenticatedAppIntegrationsRoute
   AuthenticatedAppPersonasRoute: typeof AuthenticatedAppPersonasRoute
   AuthenticatedAppReportsRoute: typeof AuthenticatedAppReportsRoute
-  AuthenticatedAppRunsRoute: typeof AuthenticatedAppRunsRoute
+  AuthenticatedAppRunsRoute: typeof AuthenticatedAppRunsRouteWithChildren
   AuthenticatedAppSettingsRoute: typeof AuthenticatedAppSettingsRoute
   AuthenticatedAppSuitesRoute: typeof AuthenticatedAppSuitesRoute
   AuthenticatedAppTargetsRoute: typeof AuthenticatedAppTargetsRoute
@@ -491,7 +521,7 @@ const AuthenticatedAppRouteChildren: AuthenticatedAppRouteChildren = {
   AuthenticatedAppIntegrationsRoute: AuthenticatedAppIntegrationsRoute,
   AuthenticatedAppPersonasRoute: AuthenticatedAppPersonasRoute,
   AuthenticatedAppReportsRoute: AuthenticatedAppReportsRoute,
-  AuthenticatedAppRunsRoute: AuthenticatedAppRunsRoute,
+  AuthenticatedAppRunsRoute: AuthenticatedAppRunsRouteWithChildren,
   AuthenticatedAppSettingsRoute: AuthenticatedAppSettingsRoute,
   AuthenticatedAppSuitesRoute: AuthenticatedAppSuitesRoute,
   AuthenticatedAppTargetsRoute: AuthenticatedAppTargetsRoute,
