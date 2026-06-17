@@ -121,14 +121,46 @@ export const tickRun = createServerFn({ method: "POST" })
       const picks = FINDING_TEMPLATES
         .sort(() => Math.random() - 0.5)
         .slice(0, 2 + Math.floor(Math.random() * 3));
-      await context.supabase.from("findings").insert(picks.map(f => ({
+      const { data: insertedFindings } = await context.supabase.from("findings").insert(picks.map(f => ({
         ...f,
         run_id: data.id,
         project_id: run.project_id,
         owner_id: context.userId,
         status: "open" as const,
         metadata: {},
-      })));
+      }))).select();
+
+      // seed evidence + alerts per finding
+      if (insertedFindings && insertedFindings.length) {
+        await context.supabase.from("evidence_items").insert(insertedFindings.map((f: any) => ({
+          owner_id: context.userId,
+          run_id: data.id,
+          finding_id: f.id,
+          kind: "screenshot" as const,
+          title: `Screenshot — ${f.title}`,
+          url: null,
+          payload: { location: f.location },
+        })));
+        await context.supabase.from("alerts").insert(insertedFindings.map((f: any) => ({
+          owner_id: context.userId,
+          run_id: data.id,
+          finding_id: f.id,
+          severity: f.severity === "critical" ? "danger" : f.severity === "high" ? "danger" : "warn",
+          title: `${f.severity.toUpperCase()}: ${f.title}`,
+          body: f.description,
+          channel: "in_app" as const,
+        })));
+      }
+    } else if (run) {
+      // success alert
+      await context.supabase.from("alerts").insert({
+        owner_id: context.userId,
+        run_id: data.id,
+        severity: "info",
+        title: "Run passed",
+        body: "All gates completed successfully.",
+        channel: "in_app",
+      });
     }
 
     await context.supabase.from("qa_runs").update({
@@ -139,3 +171,4 @@ export const tickRun = createServerFn({ method: "POST" })
 
     return { done: true };
   });
+
