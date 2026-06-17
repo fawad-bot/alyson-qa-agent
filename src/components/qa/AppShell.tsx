@@ -82,6 +82,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                   const Icon = item.icon;
                   return (
                     <Link key={item.to} to={item.to}
+                      data-testid={`nav-${item.to.slice(1)}`}
                       className={`flex items-center gap-2.5 px-3 py-1.5 rounded-md text-[13.5px] ${active ? "bg-primary-weak text-primary font-semibold" : "text-ink hover:bg-canvas"}`}>
                       <Icon className="w-4 h-4" />
                       <span className="flex-1">{item.label}</span>

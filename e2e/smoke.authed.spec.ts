@@ -28,54 +28,57 @@ test.describe("Navigation smoke", () => {
   for (const item of NAV) {
     test(`navigates to ${item.label}`, async ({ page }) => {
       await page.goto("/dashboard");
-      await page.getByRole("link", { name: item.label, exact: true }).first().click();
+      await page.getByTestId(`nav-${item.path.slice(1)}`).click();
       await page.waitForURL(`**${item.path}`);
-      // Page renders without an unhandled error boundary
       await expect(page.getByText(/something went wrong/i)).toHaveCount(0);
     });
   }
 });
 
-test("Run detail: tabs switch and evidence/findings/logs panels mount", async ({ page }) => {
+test("Run detail: all 7 tabs switch and panels mount", async ({ page }) => {
   await page.goto("/runs");
-  // Open first run row
-  const firstRun = page.locator("table tbody tr").first();
+  const firstRun = page.getByTestId("runs-row").first();
   await expect(firstRun).toBeVisible({ timeout: 10_000 });
   await firstRun.click();
   await page.waitForURL(/\/runs\/[0-9a-f-]+/);
 
-  for (const tab of ["Summary", "Pipeline", "Findings", "Evidence", "Alerts", "Logs", "Settings"]) {
-    await page.getByRole("tab", { name: new RegExp(`^${tab}`) }).click();
+  for (const tab of ["summary", "pipeline", "findings", "evidence", "alerts", "logs", "settings"]) {
+    await page.getByTestId(`run-tab-${tab}`).click();
     await expect(page.getByRole("tabpanel")).toBeVisible();
   }
 });
 
 test("Evidence drawer opens when a card is clicked", async ({ page }) => {
   await page.goto("/evidence");
-  const empty = page.getByText(/no evidence yet/i);
-  if (await empty.isVisible().catch(() => false)) {
+  const card = page.getByTestId("evidence-card").first();
+  if (!(await card.isVisible().catch(() => false))) {
     test.skip(true, "No evidence rows yet — run a few QA runs to seed data");
   }
-  await page.locator("button.card-surface").first().click();
-  // Sheet exposes a dialog role
-  await expect(page.getByRole("dialog")).toBeVisible();
+  await card.click();
+  await expect(page.getByTestId("evidence-drawer")).toBeVisible();
   await expect(page.getByText(/^Payload$/)).toBeVisible();
 });
 
-test("New Run flow creates a run and redirects to the detail page", async ({ page }) => {
+test("New Run flow: target step → branch step → submit → redirect", async ({ page }) => {
   await page.goto("/dashboard");
-  await page.getByRole("button", { name: /new run/i }).first().click();
+  await page.getByTestId("new-run-button").click();
 
-  // Pick first available target
-  const dialog = page.getByRole("dialog");
+  const dialog = page.getByTestId("new-run-dialog");
   await expect(dialog).toBeVisible();
-  await dialog.getByRole("combobox").first().click();
-  await page.getByRole("option").first().click();
+
+  // Step 1: pick target
+  await expect(dialog.getByTestId("new-run-step-target")).toBeVisible();
+  await dialog.getByTestId("new-run-target-select").click();
+  await page.locator('[data-testid^="new-run-target-option-"]').first().click();
+
+  // Step 2: branch is pre-filled with "main" but verify visible/editable
+  await expect(dialog.getByTestId("new-run-step-branch")).toBeVisible();
+  await dialog.getByTestId("new-run-branch-input").fill("main");
 
   // Submit
-  await dialog.getByRole("button", { name: /start|launch|create|run/i }).first().click();
+  await dialog.getByTestId("new-run-submit").click();
 
-  // Should land on the run detail page
+  // Redirects to detail
   await page.waitForURL(/\/runs\/[0-9a-f-]+/, { timeout: 15_000 });
-  await expect(page.getByRole("tab", { name: /pipeline/i })).toBeVisible();
+  await expect(page.getByTestId("run-tab-pipeline")).toBeVisible();
 });

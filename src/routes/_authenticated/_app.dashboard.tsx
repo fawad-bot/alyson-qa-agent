@@ -79,27 +79,27 @@ function Dashboard() {
         actions={
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-              <Button size="sm" disabled={targets.length === 0}>
+              <Button size="sm" disabled={targets.length === 0} data-testid="new-run-button">
                 <Play className="w-3.5 h-3.5 mr-1.5" />New run
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent data-testid="new-run-dialog">
               <DialogHeader><DialogTitle>Start a QA run</DialogTitle></DialogHeader>
-              <div className="space-y-3">
+              <div className="space-y-3" data-testid="new-run-step-target">
                 <div>
                   <Label>Target</Label>
                   <Select value={targetId} onValueChange={setTargetId}>
-                    <SelectTrigger><SelectValue placeholder="Choose a target" /></SelectTrigger>
+                    <SelectTrigger data-testid="new-run-target-select"><SelectValue placeholder="Choose a target" /></SelectTrigger>
                     <SelectContent>
-                      {targets.map((t: any) => <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>)}
+                      {targets.map((t: any) => <SelectItem key={t.id} value={t.id} data-testid={`new-run-target-option-${t.id}`}>{t.name}</SelectItem>)}
                     </SelectContent>
                   </Select>
                 </div>
-                <div><Label>Branch</Label><Input value={branch} onChange={e => setBranch(e.target.value)} /></div>
+                <div data-testid="new-run-step-branch"><Label>Branch</Label><Input value={branch} onChange={e => setBranch(e.target.value)} data-testid="new-run-branch-input" /></div>
               </div>
               <DialogFooter>
-                <Button variant="ghost" onClick={() => setOpen(false)}>Cancel</Button>
-                <Button onClick={() => runMut.mutate()} disabled={!targetId || runMut.isPending}>Start run</Button>
+                <Button variant="ghost" onClick={() => setOpen(false)} data-testid="new-run-cancel">Cancel</Button>
+                <Button onClick={() => runMut.mutate()} disabled={!targetId || runMut.isPending} data-testid="new-run-submit">Start run</Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
