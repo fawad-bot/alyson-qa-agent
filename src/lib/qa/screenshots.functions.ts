@@ -33,7 +33,7 @@ async function captureOne(evidenceId: string, userId: string) {
   if (!url) {
     await supabaseAdmin
       .from("evidence_items")
-      .update({ payload: { ...(ev.payload ?? {}), status: "no_target_url", error: "Project has no target_url and finding location is not a URL" } })
+      .update({ payload: { ...((ev.payload as Record<string, unknown>) ?? {}), status: "no_target_url", error: "Project has no target_url and finding location is not a URL" } })
       .eq("id", evidenceId);
     throw new Error("No target URL available. Set projects.target_url or use an absolute URL as the finding location.");
   }
