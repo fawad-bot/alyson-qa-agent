@@ -26,14 +26,13 @@ async function captureOne(evidenceId: string, userId: string) {
   if (ev.owner_id !== userId) throw new Error("Forbidden");
 
   const targetUrl = (ev as any).qa_runs?.projects?.target_url as string | null;
-  const location = (ev.payload as any)?.location as string | null;
-  const url = resolveTargetUrl(targetUrl, location);
+  const url = resolveTargetUrl(targetUrl);
   if (!url) {
     await supabaseAdmin
       .from("evidence_items")
-      .update({ payload: { ...((ev.payload as Record<string, unknown>) ?? {}), status: "no_target_url", error: "Project has no target_url and finding location is not a URL" } })
+      .update({ payload: { ...((ev.payload as Record<string, unknown>) ?? {}), status: "no_target_url", error: "Project has no landing-page URL set. Add it on the Targets page." } })
       .eq("id", evidenceId);
-    throw new Error("No target URL available. Set projects.target_url or use an absolute URL as the finding location.");
+    throw new Error("This target has no landing-page URL. Open Targets and set the URL of the page being tested.");
   }
 
   // Call ScreenshotOne
