@@ -76,7 +76,7 @@ async function captureOne(evidenceId: string, userId: string) {
     .from("evidence_items")
     .update({
       url: signed.signedUrl,
-      payload: { ...(ev.payload ?? {}), status: "captured", source: "screenshotone", target_url: url, storage_path: path, captured_at: new Date().toISOString() },
+      payload: { ...((ev.payload as Record<string, unknown>) ?? {}), status: "captured", source: "screenshotone", target_url: url, storage_path: path, captured_at: new Date().toISOString() },
     })
     .eq("id", evidenceId);
 
