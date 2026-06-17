@@ -2,14 +2,12 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 
-// Resolve the URL to capture for a given finding location + project target_url
-function resolveTargetUrl(targetUrl: string | null | undefined, location: string | null | undefined): string | null {
-  if (location && /^https?:\/\//i.test(location)) return location;
+// Capture is strictly the project's landing page (target_url root).
+// Sub-paths from finding.location are intentionally ignored so evidence
+// stays anchored to the page actually under test.
+function resolveTargetUrl(targetUrl: string | null | undefined): string | null {
   if (!targetUrl) return null;
-  const base = targetUrl.replace(/\/$/, "");
-  if (!location) return base;
-  if (location.startsWith("/")) return base + location;
-  return base; // location is a file path like src/foo.tsx:42 — fall back to homepage
+  return targetUrl.replace(/\/$/, "");
 }
 
 async function captureOne(evidenceId: string, userId: string) {
@@ -28,14 +26,13 @@ async function captureOne(evidenceId: string, userId: string) {
   if (ev.owner_id !== userId) throw new Error("Forbidden");
 
   const targetUrl = (ev as any).qa_runs?.projects?.target_url as string | null;
-  const location = (ev.payload as any)?.location as string | null;
-  const url = resolveTargetUrl(targetUrl, location);
+  const url = resolveTargetUrl(targetUrl);
   if (!url) {
     await supabaseAdmin
       .from("evidence_items")
-      .update({ payload: { ...((ev.payload as Record<string, unknown>) ?? {}), status: "no_target_url", error: "Project has no target_url and finding location is not a URL" } })
+      .update({ payload: { ...((ev.payload as Record<string, unknown>) ?? {}), status: "no_target_url", error: "Project has no landing-page URL set. Add it on the Targets page." } })
       .eq("id", evidenceId);
-    throw new Error("No target URL available. Set projects.target_url or use an absolute URL as the finding location.");
+    throw new Error("This target has no landing-page URL. Open Targets and set the URL of the page being tested.");
   }
 
   // Call ScreenshotOne

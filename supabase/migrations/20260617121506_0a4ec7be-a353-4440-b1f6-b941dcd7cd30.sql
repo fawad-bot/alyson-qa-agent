@@ -1,0 +1,1 @@
+UPDATE public.projects SET target_url = NULL WHERE target_url = 'https://lovable.dev';
