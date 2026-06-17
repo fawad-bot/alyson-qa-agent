@@ -29,7 +29,11 @@ function Evidence() {
   const captureFn = useServerFn(captureEvidenceScreenshot);
   const capture = useMutation({
     mutationFn: (evidenceId: string) => captureFn({ data: { evidenceId } }),
-    onSuccess: async (res) => {
+    onSuccess: async (res: any) => {
+      if (!res?.ok) {
+        toast.error(res?.error ?? "Capture failed");
+        return;
+      }
       toast.success("Screenshot captured");
       await qc.invalidateQueries({ queryKey: ["evidence"] });
       setSelected((s: any) => (s ? { ...s, url: res.url } : s));

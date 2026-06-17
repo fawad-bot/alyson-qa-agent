@@ -84,7 +84,14 @@ export const captureEvidenceScreenshot = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d) => z.object({ evidenceId: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
-    return captureOne(data.evidenceId, context.userId);
+    try {
+      const res = await captureOne(data.evidenceId, context.userId);
+      return { ok: true as const, url: res.url, path: res.path };
+    } catch (e: any) {
+      // Return as a typed error result so the client can show a toast
+      // without triggering the runtime-error boundary / blank screen.
+      return { ok: false as const, error: String(e?.message ?? e) };
+    }
   });
 
 export const captureRunScreenshots = createServerFn({ method: "POST" })
