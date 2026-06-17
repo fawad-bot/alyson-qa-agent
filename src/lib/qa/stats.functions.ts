@@ -26,8 +26,9 @@ export const getDashboardStats = createServerFn({ method: "GET" })
     const mttr = durs.length ? Math.round(durs.reduce((a, b) => a + b, 0) / durs.length / 1000) : 0;
 
     const open = findings.filter(f => f.status !== "resolved");
-    const p0 = open.filter(f => f.severity === "p0").length;
-    const p1 = open.filter(f => f.severity === "p1").length;
+    const p0 = open.filter(f => f.severity === "critical").length;
+    const p1 = open.filter(f => f.severity === "high").length;
+
 
     return {
       runsToday: today.length,
