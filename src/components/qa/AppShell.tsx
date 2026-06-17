@@ -1,13 +1,16 @@
 import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
-import { type ReactNode } from "react";
+import { useServerFn } from "@tanstack/react-start";
+import { type ReactNode, useState, useRef, useEffect } from "react";
 import {
   LayoutDashboard, Cpu, Target, Play, FileBarChart, FlaskConical, ShieldCheck,
   AlertTriangle, Image as ImageIcon, Bell, Wrench, UserCheck, Sparkles,
-  Users, KeyRound, Zap, Plug, Settings, LogOut, Bot, Send,
+  Users, KeyRound, Zap, Plug, Settings, LogOut, Bot, Send, Loader2,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/sonner";
+import { askAlyson } from "@/lib/qa/ai.functions";
+import { toast } from "sonner";
 
 type Item = { to: string; label: string; icon: any; badge?: string };
 
