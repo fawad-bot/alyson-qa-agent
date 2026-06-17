@@ -55,7 +55,7 @@ function Evidence() {
       )}
 
       <Sheet open={!!selected} onOpenChange={(o) => !o && setSelected(null)}>
-        <SheetContent className="w-[520px] sm:max-w-[520px] overflow-y-auto">
+        <SheetContent data-testid="evidence-drawer" className="w-[520px] sm:max-w-[520px] overflow-y-auto">
           {selected && (
             <>
               <SheetHeader><SheetTitle>{selected.title}</SheetTitle></SheetHeader>
