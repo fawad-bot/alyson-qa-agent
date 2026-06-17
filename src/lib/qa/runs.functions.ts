@@ -146,8 +146,8 @@ export const tickRun = createServerFn({ method: "POST" })
           finding_id: f.id,
           kind: "screenshot" as const,
           title: `Screenshot — ${f.title}`,
-          url: null,
-          payload: { location: f.location },
+          url: `https://picsum.photos/seed/${f.id}/960/540`,
+          payload: { location: f.location, thumbnail: `https://picsum.photos/seed/${f.id}/480/270` },
         })));
         await context.supabase.from("alerts").insert(insertedFindings.map((f: any) => ({
           owner_id: context.userId,
