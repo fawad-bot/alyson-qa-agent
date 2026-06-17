@@ -140,7 +140,7 @@ export const tickRun = createServerFn({ method: "POST" })
 
       // seed evidence + alerts per finding
       if (insertedFindings && insertedFindings.length) {
-        await context.supabase.from("evidence_items").insert(insertedFindings.map((f: any) => ({
+        const { data: insertedEvidence } = await context.supabase.from("evidence_items").insert(insertedFindings.map((f: any) => ({
           owner_id: context.userId,
           run_id: data.id,
           finding_id: f.id,
@@ -148,7 +148,8 @@ export const tickRun = createServerFn({ method: "POST" })
           title: `Screenshot — ${f.title}`,
           url: null,
           payload: { location: f.location, status: "pending_capture" },
-        })));
+        }))).select("id");
+
         await context.supabase.from("alerts").insert(insertedFindings.map((f: any) => ({
           owner_id: context.userId,
           run_id: data.id,
@@ -158,6 +159,18 @@ export const tickRun = createServerFn({ method: "POST" })
           body: f.description,
           channel: "in_app" as const,
         })));
+
+        // Fire-and-forget real screenshot captures via ScreenshotOne
+        if (insertedEvidence && process.env.SCREENSHOTONE_ACCESS_KEY) {
+          const { captureEvidenceScreenshot: _cap } = await import("./screenshots.functions");
+          // Run captures sequentially in the background; don't block run finalize.
+          // Errors are swallowed and reflected on the evidence row payload by captureOne.
+          Promise.allSettled(
+            insertedEvidence.map((e: any) =>
+              _cap({ data: { evidenceId: e.id } }).catch(() => null),
+            ),
+          );
+        }
       }
     } else if (run) {
       // success alert
