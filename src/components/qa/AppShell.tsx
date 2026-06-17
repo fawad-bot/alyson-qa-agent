@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/sonner";
 import { askAlyson } from "@/lib/qa/ai.functions";
 import { toast } from "sonner";
+import alysonLogo from "@/assets/alyson-logo.png.asset.json";
 
 type Item = { to: string; label: string; icon: any; badge?: string };
 
