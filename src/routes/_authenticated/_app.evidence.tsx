@@ -1,10 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import { queryOptions, useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { listEvidence } from "@/lib/qa/phase3.functions";
+import { captureEvidenceScreenshot } from "@/lib/qa/screenshots.functions";
+import { useServerFn } from "@tanstack/react-start";
 import { PageHeader } from "@/components/qa/AppShell";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { Camera, FileText, Activity, Film, Globe, Layers } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Camera, FileText, Activity, Film, Globe, Layers, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 const opts = () => queryOptions({ queryKey: ["evidence"], queryFn: () => listEvidence() });
 
@@ -21,6 +25,17 @@ function Evidence() {
   const { data } = useSuspenseQuery(opts());
   const [selected, setSelected] = useState<any>(null);
   const Icon = selected ? (KIND_ICON[selected.kind] ?? FileText) : FileText;
+  const qc = useQueryClient();
+  const captureFn = useServerFn(captureEvidenceScreenshot);
+  const capture = useMutation({
+    mutationFn: (evidenceId: string) => captureFn({ data: { evidenceId } }),
+    onSuccess: async (res) => {
+      toast.success("Screenshot captured");
+      await qc.invalidateQueries({ queryKey: ["evidence"] });
+      setSelected((s: any) => (s ? { ...s, url: res.url } : s));
+    },
+    onError: (e: any) => toast.error(e?.message ?? "Capture failed"),
+  });
 
   return (
     <>
