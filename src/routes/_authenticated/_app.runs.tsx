@@ -87,7 +87,7 @@ function Runs() {
             </thead>
             <tbody>
               {runs.map((r: any) => (
-                <tr key={r.id} className="border-t border-border hover:bg-canvas/60 cursor-pointer" onClick={() => location.assign(`/runs/${r.id}`)}>
+                <tr key={r.id} data-testid="runs-row" className="border-t border-border hover:bg-canvas/60 cursor-pointer" onClick={() => location.assign(`/runs/${r.id}`)}>
                   <td className="px-4 py-3 font-medium">{r.projects?.name ?? "—"}</td>
                   <td className="px-4 py-3 text-t2">{r.branch ?? "—"}</td>
                   <td className="px-4 py-3 text-t2">{r.trigger}</td>
