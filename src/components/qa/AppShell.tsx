@@ -14,13 +14,13 @@ type Item = { to: string; label: string; icon: any; badge?: string };
 const NAV: { label: string; items: Item[] }[] = [
   { label: "Overview", items: [
     { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-    { to: "/engines", label: "Engines", icon: Cpu },
+    { to: "/engines", label: "Agent Engines", icon: Cpu },
   ]},
   { label: "Testing", items: [
-    { to: "/targets", label: "Targets", icon: Target },
-    { to: "/runs", label: "Runs", icon: Play },
+    { to: "/targets", label: "Applications & Targets", icon: Target },
+    { to: "/runs", label: "QA Runs", icon: Play },
     { to: "/reports", label: "Reports", icon: FileBarChart },
-    { to: "/suites", label: "Suites", icon: FlaskConical },
+    { to: "/suites", label: "Test Suites", icon: FlaskConical },
     { to: "/gates", label: "Quality Gates", icon: ShieldCheck },
   ]},
   { label: "Findings", items: [
@@ -30,13 +30,13 @@ const NAV: { label: string; items: Item[] }[] = [
   ]},
   { label: "Remediation", items: [
     { to: "/fix-tasks", label: "Fix Tasks", icon: Wrench },
-    { to: "/human-review", label: "Human Review", icon: UserCheck, badge: "2 P0" },
-    { to: "/auto-fix", label: "Auto-Fix", icon: Sparkles },
+    { to: "/human-review", label: "Human Review", icon: UserCheck },
+    { to: "/auto-fix", label: "Auto-Fix Queue", icon: Sparkles },
   ]},
   { label: "Config", items: [
-    { to: "/personas", label: "Personas", icon: Users },
+    { to: "/personas", label: "Test Personas", icon: Users },
     { to: "/credentials", label: "Credentials", icon: KeyRound },
-    { to: "/triggers", label: "Triggers & Roles", icon: Zap },
+    { to: "/triggers", label: "Triggers", icon: Zap },
     { to: "/integrations", label: "Integrations", icon: Plug },
     { to: "/settings", label: "Settings", icon: Settings },
   ]},
