@@ -68,6 +68,53 @@ export type Database = {
           },
         ]
       }
+      credentials: {
+        Row: {
+          created_at: string
+          expires_at: string | null
+          id: string
+          kind: string
+          name: string
+          owner_id: string
+          persona_id: string | null
+          status: string
+          updated_at: string
+          vault_ref: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          kind?: string
+          name: string
+          owner_id: string
+          persona_id?: string | null
+          status?: string
+          updated_at?: string
+          vault_ref: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          kind?: string
+          name?: string
+          owner_id?: string
+          persona_id?: string | null
+          status?: string
+          updated_at?: string
+          vault_ref?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "credentials_persona_id_fkey"
+            columns: ["persona_id"]
+            isOneToOne: false
+            referencedRelation: "personas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       evidence_items: {
         Row: {
           created_at: string
@@ -182,6 +229,135 @@ export type Database = {
           },
         ]
       }
+      fix_tasks: {
+        Row: {
+          assignee: string | null
+          auto_fixable: boolean
+          created_at: string
+          finding_id: string | null
+          id: string
+          owner_id: string
+          patch_preview: string | null
+          priority: string
+          requires_human_review: boolean
+          run_id: string | null
+          status: string
+          summary: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          assignee?: string | null
+          auto_fixable?: boolean
+          created_at?: string
+          finding_id?: string | null
+          id?: string
+          owner_id: string
+          patch_preview?: string | null
+          priority?: string
+          requires_human_review?: boolean
+          run_id?: string | null
+          status?: string
+          summary?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          assignee?: string | null
+          auto_fixable?: boolean
+          created_at?: string
+          finding_id?: string | null
+          id?: string
+          owner_id?: string
+          patch_preview?: string | null
+          priority?: string
+          requires_human_review?: boolean
+          run_id?: string | null
+          status?: string
+          summary?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fix_tasks_finding_id_fkey"
+            columns: ["finding_id"]
+            isOneToOne: false
+            referencedRelation: "findings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fix_tasks_run_id_fkey"
+            columns: ["run_id"]
+            isOneToOne: false
+            referencedRelation: "qa_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      integrations: {
+        Row: {
+          config: Json
+          created_at: string
+          id: string
+          owner_id: string
+          provider: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          config?: Json
+          created_at?: string
+          id?: string
+          owner_id: string
+          provider: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          config?: Json
+          created_at?: string
+          id?: string
+          owner_id?: string
+          provider?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      personas: {
+        Row: {
+          created_at: string
+          description: string
+          enabled: boolean
+          id: string
+          name: string
+          owner_id: string
+          role: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          enabled?: boolean
+          id?: string
+          name: string
+          owner_id: string
+          role?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          enabled?: boolean
+          id?: string
+          name?: string
+          owner_id?: string
+          role?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -288,6 +464,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      qa_triggers: {
+        Row: {
+          config: Json
+          created_at: string
+          enabled: boolean
+          id: string
+          kind: string
+          label: string
+          owner_id: string
+          updated_at: string
+        }
+        Insert: {
+          config?: Json
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          kind: string
+          label: string
+          owner_id: string
+          updated_at?: string
+        }
+        Update: {
+          config?: Json
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          kind?: string
+          label?: string
+          owner_id?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       quality_gates: {
         Row: {
@@ -432,6 +641,42 @@ export type Database = {
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
+        }
+        Relationships: []
+      }
+      workspace_settings: {
+        Row: {
+          ai_auto_fix: boolean
+          ai_starts_runs: boolean
+          created_at: string
+          default_gate: string
+          default_mode: string
+          evidence_retention_days: number
+          owner_id: string
+          updated_at: string
+          workspace_name: string
+        }
+        Insert: {
+          ai_auto_fix?: boolean
+          ai_starts_runs?: boolean
+          created_at?: string
+          default_gate?: string
+          default_mode?: string
+          evidence_retention_days?: number
+          owner_id: string
+          updated_at?: string
+          workspace_name?: string
+        }
+        Update: {
+          ai_auto_fix?: boolean
+          ai_starts_runs?: boolean
+          created_at?: string
+          default_gate?: string
+          default_mode?: string
+          evidence_retention_days?: number
+          owner_id?: string
+          updated_at?: string
+          workspace_name?: string
         }
         Relationships: []
       }
