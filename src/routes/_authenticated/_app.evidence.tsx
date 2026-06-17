@@ -91,15 +91,29 @@ function Evidence() {
                     <>
                       <Icon className="w-12 h-12 text-t3 mb-2" />
                       <span className="text-[12px] text-t2">No asset captured yet</span>
-                      <span className="text-[11px] text-t3 mt-1 px-6 text-center">
-                        Browser capture requires an external runner (e.g. Browserless, Playwright worker). None is connected.
-                      </span>
+                      {selected.kind === "screenshot" && (
+                        <span className="text-[11px] text-t3 mt-1 px-6 text-center">
+                          Capture a real screenshot of the target URL via ScreenshotOne.
+                        </span>
+                      )}
                     </>
                   )}
                 </div>
-                <div className="flex gap-2 flex-wrap">
+                <div className="flex gap-2 flex-wrap items-center">
                   <span className="text-[11px] font-semibold px-2 py-0.5 rounded uppercase bg-primary-weak text-primary">{selected.kind}</span>
                   <span className="text-[11px] px-2 py-0.5 rounded bg-canvas text-t2">{new Date(selected.created_at).toLocaleString()}</span>
+                  {selected.kind === "screenshot" && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="ml-auto h-7 text-[12px]"
+                      disabled={capture.isPending}
+                      onClick={() => capture.mutate(selected.id)}
+                    >
+                      {capture.isPending ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : <Camera className="w-3 h-3 mr-1" />}
+                      {selected.url ? "Re-capture" : "Capture screenshot"}
+                    </Button>
+                  )}
                 </div>
                 <div><div className="text-eyebrow mb-1">Run</div><div className="text-[13.5px]">{selected.qa_runs?.projects?.name ?? "—"} · {selected.qa_runs?.branch ?? "—"}</div></div>
                 {selected.url && (
