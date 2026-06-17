@@ -64,9 +64,9 @@ export function AppShell({ children }: { children: ReactNode }) {
   }
 
   return (
-    <div className="min-h-screen flex bg-canvas">
+    <div className="h-screen flex bg-canvas overflow-hidden">
       <Toaster />
-      <aside className="w-[248px] shrink-0 bg-surface border-r border-border flex flex-col">
+      <aside className="w-[248px] shrink-0 bg-surface border-r border-border flex flex-col h-full">
         <div className="px-5 py-4 border-b border-border flex items-center gap-2">
           <img src={alysonLogo.url} alt="Alyson" className="w-7 h-7 rounded-lg object-cover" />
           <div className="font-semibold text-[15px]">Alyson</div>
@@ -101,7 +101,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         </div>
       </aside>
 
-      <main className="flex-1 min-w-0 overflow-y-auto">
+      <main className="flex-1 min-w-0 overflow-y-auto h-full">
         <div className="max-w-[1160px] mx-auto px-8 py-8">{children}</div>
       </main>
 
@@ -145,7 +145,7 @@ function ChatPanel({ pathname, ctx }: { pathname: string; ctx: { title: string; 
   }
 
   return (
-    <aside className="w-[360px] shrink-0 bg-surface border-l border-border flex flex-col">
+    <aside className="w-[360px] shrink-0 bg-surface border-l border-border flex flex-col h-full">
       <div className="px-5 py-4 border-b border-border flex items-center gap-2">
         <div className="w-7 h-7 rounded-full bg-primary-weak text-primary grid place-items-center"><Bot className="w-4 h-4" /></div>
         <div>
