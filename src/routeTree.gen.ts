@@ -9,38 +9,310 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedAppRouteImport } from './routes/_authenticated/_app'
+import { Route as AuthenticatedAppTriggersRouteImport } from './routes/_authenticated/_app.triggers'
+import { Route as AuthenticatedAppTargetsRouteImport } from './routes/_authenticated/_app.targets'
+import { Route as AuthenticatedAppSuitesRouteImport } from './routes/_authenticated/_app.suites'
+import { Route as AuthenticatedAppSettingsRouteImport } from './routes/_authenticated/_app.settings'
+import { Route as AuthenticatedAppRunsRouteImport } from './routes/_authenticated/_app.runs'
+import { Route as AuthenticatedAppReportsRouteImport } from './routes/_authenticated/_app.reports'
+import { Route as AuthenticatedAppPersonasRouteImport } from './routes/_authenticated/_app.personas'
+import { Route as AuthenticatedAppIntegrationsRouteImport } from './routes/_authenticated/_app.integrations'
+import { Route as AuthenticatedAppHumanReviewRouteImport } from './routes/_authenticated/_app.human-review'
+import { Route as AuthenticatedAppGatesRouteImport } from './routes/_authenticated/_app.gates'
+import { Route as AuthenticatedAppFixTasksRouteImport } from './routes/_authenticated/_app.fix-tasks'
+import { Route as AuthenticatedAppFindingsRouteImport } from './routes/_authenticated/_app.findings'
+import { Route as AuthenticatedAppEvidenceRouteImport } from './routes/_authenticated/_app.evidence'
+import { Route as AuthenticatedAppEnginesRouteImport } from './routes/_authenticated/_app.engines'
+import { Route as AuthenticatedAppDashboardRouteImport } from './routes/_authenticated/_app.dashboard'
+import { Route as AuthenticatedAppCredentialsRouteImport } from './routes/_authenticated/_app.credentials'
+import { Route as AuthenticatedAppAutoFixRouteImport } from './routes/_authenticated/_app.auto-fix'
+import { Route as AuthenticatedAppAlertsRouteImport } from './routes/_authenticated/_app.alerts'
 
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAppRoute = AuthenticatedAppRouteImport.update({
+  id: '/_app',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAppTriggersRoute =
+  AuthenticatedAppTriggersRouteImport.update({
+    id: '/triggers',
+    path: '/triggers',
+    getParentRoute: () => AuthenticatedAppRoute,
+  } as any)
+const AuthenticatedAppTargetsRoute = AuthenticatedAppTargetsRouteImport.update({
+  id: '/targets',
+  path: '/targets',
+  getParentRoute: () => AuthenticatedAppRoute,
+} as any)
+const AuthenticatedAppSuitesRoute = AuthenticatedAppSuitesRouteImport.update({
+  id: '/suites',
+  path: '/suites',
+  getParentRoute: () => AuthenticatedAppRoute,
+} as any)
+const AuthenticatedAppSettingsRoute =
+  AuthenticatedAppSettingsRouteImport.update({
+    id: '/settings',
+    path: '/settings',
+    getParentRoute: () => AuthenticatedAppRoute,
+  } as any)
+const AuthenticatedAppRunsRoute = AuthenticatedAppRunsRouteImport.update({
+  id: '/runs',
+  path: '/runs',
+  getParentRoute: () => AuthenticatedAppRoute,
+} as any)
+const AuthenticatedAppReportsRoute = AuthenticatedAppReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => AuthenticatedAppRoute,
+} as any)
+const AuthenticatedAppPersonasRoute =
+  AuthenticatedAppPersonasRouteImport.update({
+    id: '/personas',
+    path: '/personas',
+    getParentRoute: () => AuthenticatedAppRoute,
+  } as any)
+const AuthenticatedAppIntegrationsRoute =
+  AuthenticatedAppIntegrationsRouteImport.update({
+    id: '/integrations',
+    path: '/integrations',
+    getParentRoute: () => AuthenticatedAppRoute,
+  } as any)
+const AuthenticatedAppHumanReviewRoute =
+  AuthenticatedAppHumanReviewRouteImport.update({
+    id: '/human-review',
+    path: '/human-review',
+    getParentRoute: () => AuthenticatedAppRoute,
+  } as any)
+const AuthenticatedAppGatesRoute = AuthenticatedAppGatesRouteImport.update({
+  id: '/gates',
+  path: '/gates',
+  getParentRoute: () => AuthenticatedAppRoute,
+} as any)
+const AuthenticatedAppFixTasksRoute =
+  AuthenticatedAppFixTasksRouteImport.update({
+    id: '/fix-tasks',
+    path: '/fix-tasks',
+    getParentRoute: () => AuthenticatedAppRoute,
+  } as any)
+const AuthenticatedAppFindingsRoute =
+  AuthenticatedAppFindingsRouteImport.update({
+    id: '/findings',
+    path: '/findings',
+    getParentRoute: () => AuthenticatedAppRoute,
+  } as any)
+const AuthenticatedAppEvidenceRoute =
+  AuthenticatedAppEvidenceRouteImport.update({
+    id: '/evidence',
+    path: '/evidence',
+    getParentRoute: () => AuthenticatedAppRoute,
+  } as any)
+const AuthenticatedAppEnginesRoute = AuthenticatedAppEnginesRouteImport.update({
+  id: '/engines',
+  path: '/engines',
+  getParentRoute: () => AuthenticatedAppRoute,
+} as any)
+const AuthenticatedAppDashboardRoute =
+  AuthenticatedAppDashboardRouteImport.update({
+    id: '/dashboard',
+    path: '/dashboard',
+    getParentRoute: () => AuthenticatedAppRoute,
+  } as any)
+const AuthenticatedAppCredentialsRoute =
+  AuthenticatedAppCredentialsRouteImport.update({
+    id: '/credentials',
+    path: '/credentials',
+    getParentRoute: () => AuthenticatedAppRoute,
+  } as any)
+const AuthenticatedAppAutoFixRoute = AuthenticatedAppAutoFixRouteImport.update({
+  id: '/auto-fix',
+  path: '/auto-fix',
+  getParentRoute: () => AuthenticatedAppRoute,
+} as any)
+const AuthenticatedAppAlertsRoute = AuthenticatedAppAlertsRouteImport.update({
+  id: '/alerts',
+  path: '/alerts',
+  getParentRoute: () => AuthenticatedAppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/alerts': typeof AuthenticatedAppAlertsRoute
+  '/auto-fix': typeof AuthenticatedAppAutoFixRoute
+  '/credentials': typeof AuthenticatedAppCredentialsRoute
+  '/dashboard': typeof AuthenticatedAppDashboardRoute
+  '/engines': typeof AuthenticatedAppEnginesRoute
+  '/evidence': typeof AuthenticatedAppEvidenceRoute
+  '/findings': typeof AuthenticatedAppFindingsRoute
+  '/fix-tasks': typeof AuthenticatedAppFixTasksRoute
+  '/gates': typeof AuthenticatedAppGatesRoute
+  '/human-review': typeof AuthenticatedAppHumanReviewRoute
+  '/integrations': typeof AuthenticatedAppIntegrationsRoute
+  '/personas': typeof AuthenticatedAppPersonasRoute
+  '/reports': typeof AuthenticatedAppReportsRoute
+  '/runs': typeof AuthenticatedAppRunsRoute
+  '/settings': typeof AuthenticatedAppSettingsRoute
+  '/suites': typeof AuthenticatedAppSuitesRoute
+  '/targets': typeof AuthenticatedAppTargetsRoute
+  '/triggers': typeof AuthenticatedAppTriggersRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/alerts': typeof AuthenticatedAppAlertsRoute
+  '/auto-fix': typeof AuthenticatedAppAutoFixRoute
+  '/credentials': typeof AuthenticatedAppCredentialsRoute
+  '/dashboard': typeof AuthenticatedAppDashboardRoute
+  '/engines': typeof AuthenticatedAppEnginesRoute
+  '/evidence': typeof AuthenticatedAppEvidenceRoute
+  '/findings': typeof AuthenticatedAppFindingsRoute
+  '/fix-tasks': typeof AuthenticatedAppFixTasksRoute
+  '/gates': typeof AuthenticatedAppGatesRoute
+  '/human-review': typeof AuthenticatedAppHumanReviewRoute
+  '/integrations': typeof AuthenticatedAppIntegrationsRoute
+  '/personas': typeof AuthenticatedAppPersonasRoute
+  '/reports': typeof AuthenticatedAppReportsRoute
+  '/runs': typeof AuthenticatedAppRunsRoute
+  '/settings': typeof AuthenticatedAppSettingsRoute
+  '/suites': typeof AuthenticatedAppSuitesRoute
+  '/targets': typeof AuthenticatedAppTargetsRoute
+  '/triggers': typeof AuthenticatedAppTriggersRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/_authenticated/_app': typeof AuthenticatedAppRouteWithChildren
+  '/_authenticated/_app/alerts': typeof AuthenticatedAppAlertsRoute
+  '/_authenticated/_app/auto-fix': typeof AuthenticatedAppAutoFixRoute
+  '/_authenticated/_app/credentials': typeof AuthenticatedAppCredentialsRoute
+  '/_authenticated/_app/dashboard': typeof AuthenticatedAppDashboardRoute
+  '/_authenticated/_app/engines': typeof AuthenticatedAppEnginesRoute
+  '/_authenticated/_app/evidence': typeof AuthenticatedAppEvidenceRoute
+  '/_authenticated/_app/findings': typeof AuthenticatedAppFindingsRoute
+  '/_authenticated/_app/fix-tasks': typeof AuthenticatedAppFixTasksRoute
+  '/_authenticated/_app/gates': typeof AuthenticatedAppGatesRoute
+  '/_authenticated/_app/human-review': typeof AuthenticatedAppHumanReviewRoute
+  '/_authenticated/_app/integrations': typeof AuthenticatedAppIntegrationsRoute
+  '/_authenticated/_app/personas': typeof AuthenticatedAppPersonasRoute
+  '/_authenticated/_app/reports': typeof AuthenticatedAppReportsRoute
+  '/_authenticated/_app/runs': typeof AuthenticatedAppRunsRoute
+  '/_authenticated/_app/settings': typeof AuthenticatedAppSettingsRoute
+  '/_authenticated/_app/suites': typeof AuthenticatedAppSuitesRoute
+  '/_authenticated/_app/targets': typeof AuthenticatedAppTargetsRoute
+  '/_authenticated/_app/triggers': typeof AuthenticatedAppTriggersRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/alerts'
+    | '/auto-fix'
+    | '/credentials'
+    | '/dashboard'
+    | '/engines'
+    | '/evidence'
+    | '/findings'
+    | '/fix-tasks'
+    | '/gates'
+    | '/human-review'
+    | '/integrations'
+    | '/personas'
+    | '/reports'
+    | '/runs'
+    | '/settings'
+    | '/suites'
+    | '/targets'
+    | '/triggers'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/auth'
+    | '/alerts'
+    | '/auto-fix'
+    | '/credentials'
+    | '/dashboard'
+    | '/engines'
+    | '/evidence'
+    | '/findings'
+    | '/fix-tasks'
+    | '/gates'
+    | '/human-review'
+    | '/integrations'
+    | '/personas'
+    | '/reports'
+    | '/runs'
+    | '/settings'
+    | '/suites'
+    | '/targets'
+    | '/triggers'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/auth'
+    | '/_authenticated/_app'
+    | '/_authenticated/_app/alerts'
+    | '/_authenticated/_app/auto-fix'
+    | '/_authenticated/_app/credentials'
+    | '/_authenticated/_app/dashboard'
+    | '/_authenticated/_app/engines'
+    | '/_authenticated/_app/evidence'
+    | '/_authenticated/_app/findings'
+    | '/_authenticated/_app/fix-tasks'
+    | '/_authenticated/_app/gates'
+    | '/_authenticated/_app/human-review'
+    | '/_authenticated/_app/integrations'
+    | '/_authenticated/_app/personas'
+    | '/_authenticated/_app/reports'
+    | '/_authenticated/_app/runs'
+    | '/_authenticated/_app/settings'
+    | '/_authenticated/_app/suites'
+    | '/_authenticated/_app/targets'
+    | '/_authenticated/_app/triggers'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +320,202 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/_app': {
+      id: '/_authenticated/_app'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedAppRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/_app/triggers': {
+      id: '/_authenticated/_app/triggers'
+      path: '/triggers'
+      fullPath: '/triggers'
+      preLoaderRoute: typeof AuthenticatedAppTriggersRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/_app/targets': {
+      id: '/_authenticated/_app/targets'
+      path: '/targets'
+      fullPath: '/targets'
+      preLoaderRoute: typeof AuthenticatedAppTargetsRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/_app/suites': {
+      id: '/_authenticated/_app/suites'
+      path: '/suites'
+      fullPath: '/suites'
+      preLoaderRoute: typeof AuthenticatedAppSuitesRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/_app/settings': {
+      id: '/_authenticated/_app/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AuthenticatedAppSettingsRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/_app/runs': {
+      id: '/_authenticated/_app/runs'
+      path: '/runs'
+      fullPath: '/runs'
+      preLoaderRoute: typeof AuthenticatedAppRunsRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/_app/reports': {
+      id: '/_authenticated/_app/reports'
+      path: '/reports'
+      fullPath: '/reports'
+      preLoaderRoute: typeof AuthenticatedAppReportsRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/_app/personas': {
+      id: '/_authenticated/_app/personas'
+      path: '/personas'
+      fullPath: '/personas'
+      preLoaderRoute: typeof AuthenticatedAppPersonasRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/_app/integrations': {
+      id: '/_authenticated/_app/integrations'
+      path: '/integrations'
+      fullPath: '/integrations'
+      preLoaderRoute: typeof AuthenticatedAppIntegrationsRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/_app/human-review': {
+      id: '/_authenticated/_app/human-review'
+      path: '/human-review'
+      fullPath: '/human-review'
+      preLoaderRoute: typeof AuthenticatedAppHumanReviewRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/_app/gates': {
+      id: '/_authenticated/_app/gates'
+      path: '/gates'
+      fullPath: '/gates'
+      preLoaderRoute: typeof AuthenticatedAppGatesRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/_app/fix-tasks': {
+      id: '/_authenticated/_app/fix-tasks'
+      path: '/fix-tasks'
+      fullPath: '/fix-tasks'
+      preLoaderRoute: typeof AuthenticatedAppFixTasksRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/_app/findings': {
+      id: '/_authenticated/_app/findings'
+      path: '/findings'
+      fullPath: '/findings'
+      preLoaderRoute: typeof AuthenticatedAppFindingsRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/_app/evidence': {
+      id: '/_authenticated/_app/evidence'
+      path: '/evidence'
+      fullPath: '/evidence'
+      preLoaderRoute: typeof AuthenticatedAppEvidenceRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/_app/engines': {
+      id: '/_authenticated/_app/engines'
+      path: '/engines'
+      fullPath: '/engines'
+      preLoaderRoute: typeof AuthenticatedAppEnginesRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/_app/dashboard': {
+      id: '/_authenticated/_app/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthenticatedAppDashboardRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/_app/credentials': {
+      id: '/_authenticated/_app/credentials'
+      path: '/credentials'
+      fullPath: '/credentials'
+      preLoaderRoute: typeof AuthenticatedAppCredentialsRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/_app/auto-fix': {
+      id: '/_authenticated/_app/auto-fix'
+      path: '/auto-fix'
+      fullPath: '/auto-fix'
+      preLoaderRoute: typeof AuthenticatedAppAutoFixRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/_app/alerts': {
+      id: '/_authenticated/_app/alerts'
+      path: '/alerts'
+      fullPath: '/alerts'
+      preLoaderRoute: typeof AuthenticatedAppAlertsRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
   }
 }
 
+interface AuthenticatedAppRouteChildren {
+  AuthenticatedAppAlertsRoute: typeof AuthenticatedAppAlertsRoute
+  AuthenticatedAppAutoFixRoute: typeof AuthenticatedAppAutoFixRoute
+  AuthenticatedAppCredentialsRoute: typeof AuthenticatedAppCredentialsRoute
+  AuthenticatedAppDashboardRoute: typeof AuthenticatedAppDashboardRoute
+  AuthenticatedAppEnginesRoute: typeof AuthenticatedAppEnginesRoute
+  AuthenticatedAppEvidenceRoute: typeof AuthenticatedAppEvidenceRoute
+  AuthenticatedAppFindingsRoute: typeof AuthenticatedAppFindingsRoute
+  AuthenticatedAppFixTasksRoute: typeof AuthenticatedAppFixTasksRoute
+  AuthenticatedAppGatesRoute: typeof AuthenticatedAppGatesRoute
+  AuthenticatedAppHumanReviewRoute: typeof AuthenticatedAppHumanReviewRoute
+  AuthenticatedAppIntegrationsRoute: typeof AuthenticatedAppIntegrationsRoute
+  AuthenticatedAppPersonasRoute: typeof AuthenticatedAppPersonasRoute
+  AuthenticatedAppReportsRoute: typeof AuthenticatedAppReportsRoute
+  AuthenticatedAppRunsRoute: typeof AuthenticatedAppRunsRoute
+  AuthenticatedAppSettingsRoute: typeof AuthenticatedAppSettingsRoute
+  AuthenticatedAppSuitesRoute: typeof AuthenticatedAppSuitesRoute
+  AuthenticatedAppTargetsRoute: typeof AuthenticatedAppTargetsRoute
+  AuthenticatedAppTriggersRoute: typeof AuthenticatedAppTriggersRoute
+}
+
+const AuthenticatedAppRouteChildren: AuthenticatedAppRouteChildren = {
+  AuthenticatedAppAlertsRoute: AuthenticatedAppAlertsRoute,
+  AuthenticatedAppAutoFixRoute: AuthenticatedAppAutoFixRoute,
+  AuthenticatedAppCredentialsRoute: AuthenticatedAppCredentialsRoute,
+  AuthenticatedAppDashboardRoute: AuthenticatedAppDashboardRoute,
+  AuthenticatedAppEnginesRoute: AuthenticatedAppEnginesRoute,
+  AuthenticatedAppEvidenceRoute: AuthenticatedAppEvidenceRoute,
+  AuthenticatedAppFindingsRoute: AuthenticatedAppFindingsRoute,
+  AuthenticatedAppFixTasksRoute: AuthenticatedAppFixTasksRoute,
+  AuthenticatedAppGatesRoute: AuthenticatedAppGatesRoute,
+  AuthenticatedAppHumanReviewRoute: AuthenticatedAppHumanReviewRoute,
+  AuthenticatedAppIntegrationsRoute: AuthenticatedAppIntegrationsRoute,
+  AuthenticatedAppPersonasRoute: AuthenticatedAppPersonasRoute,
+  AuthenticatedAppReportsRoute: AuthenticatedAppReportsRoute,
+  AuthenticatedAppRunsRoute: AuthenticatedAppRunsRoute,
+  AuthenticatedAppSettingsRoute: AuthenticatedAppSettingsRoute,
+  AuthenticatedAppSuitesRoute: AuthenticatedAppSuitesRoute,
+  AuthenticatedAppTargetsRoute: AuthenticatedAppTargetsRoute,
+  AuthenticatedAppTriggersRoute: AuthenticatedAppTriggersRoute,
+}
+
+const AuthenticatedAppRouteWithChildren =
+  AuthenticatedAppRoute._addFileChildren(AuthenticatedAppRouteChildren)
+
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAppRoute: typeof AuthenticatedAppRouteWithChildren
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAppRoute: AuthenticatedAppRouteWithChildren,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
