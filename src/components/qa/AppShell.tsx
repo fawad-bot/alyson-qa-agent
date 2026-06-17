@@ -145,7 +145,7 @@ function ChatPanel({ pathname, ctx }: { pathname: string; ctx: { title: string; 
   }
 
   return (
-    <aside className="w-[360px] shrink-0 bg-surface border-l border-border flex flex-col">
+    <aside className="w-[360px] shrink-0 bg-surface border-l border-border flex flex-col h-full">
       <div className="px-5 py-4 border-b border-border flex items-center gap-2">
         <div className="w-7 h-7 rounded-full bg-primary-weak text-primary grid place-items-center"><Bot className="w-4 h-4" /></div>
         <div>
