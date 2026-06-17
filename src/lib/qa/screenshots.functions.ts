@@ -2,14 +2,12 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 
-// Resolve the URL to capture for a given finding location + project target_url
-function resolveTargetUrl(targetUrl: string | null | undefined, location: string | null | undefined): string | null {
-  if (location && /^https?:\/\//i.test(location)) return location;
+// Capture is strictly the project's landing page (target_url root).
+// Sub-paths from finding.location are intentionally ignored so evidence
+// stays anchored to the page actually under test.
+function resolveTargetUrl(targetUrl: string | null | undefined): string | null {
   if (!targetUrl) return null;
-  const base = targetUrl.replace(/\/$/, "");
-  if (!location) return base;
-  if (location.startsWith("/")) return base + location;
-  return base; // location is a file path like src/foo.tsx:42 — fall back to homepage
+  return targetUrl.replace(/\/$/, "");
 }
 
 async function captureOne(evidenceId: string, userId: string) {
