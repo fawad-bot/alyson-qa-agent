@@ -36,7 +36,7 @@ function Evidence() {
           {data.map((e: any) => {
             const CardIcon = KIND_ICON[e.kind] ?? FileText;
             return (
-              <button key={e.id} onClick={() => setSelected(e)} className="card-surface text-left hover:border-primary/40 transition-colors">
+              <button key={e.id} data-testid="evidence-card" onClick={() => setSelected(e)} className="card-surface text-left hover:border-primary/40 transition-colors">
                 <div className="aspect-video bg-canvas rounded-lg flex items-center justify-center mb-3 border border-border">
                   <CardIcon className="w-10 h-10 text-t3" />
                 </div>
