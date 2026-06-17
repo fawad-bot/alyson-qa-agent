@@ -33,14 +33,22 @@ export const getRun = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
-    const [run, gates, findings] = await Promise.all([
+    const [run, gates, findings, evidence, alerts] = await Promise.all([
       context.supabase.from("qa_runs").select("*, projects(name)").eq("id", data.id).maybeSingle(),
       context.supabase.from("run_gates").select("*").eq("run_id", data.id).order("ordering"),
       context.supabase.from("findings").select("*").eq("run_id", data.id).order("severity"),
+      context.supabase.from("evidence_items").select("*").eq("run_id", data.id).order("created_at", { ascending: false }),
+      context.supabase.from("alerts").select("*").eq("run_id", data.id).order("created_at", { ascending: false }),
     ]);
     if (run.error) throw new Error(run.error.message);
     if (!run.data) throw new Error("Run not found");
-    return { run: run.data, gates: gates.data ?? [], findings: findings.data ?? [] };
+    return {
+      run: run.data,
+      gates: gates.data ?? [],
+      findings: findings.data ?? [],
+      evidence: evidence.data ?? [],
+      alerts: alerts.data ?? [],
+    };
   });
 
 export const createRun = createServerFn({ method: "POST" })
