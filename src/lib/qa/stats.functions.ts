@@ -7,10 +7,11 @@ export const getDashboardStats = createServerFn({ method: "GET" })
     const { supabase } = context;
     const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
 
-    const [runsAll, runsToday, findingsOpen] = await Promise.all([
+    const [runsAll, runsToday, findingsOpen, recent] = await Promise.all([
       supabase.from("qa_runs").select("id, status, started_at, finished_at"),
       supabase.from("qa_runs").select("id, status").gte("started_at", since),
       supabase.from("findings").select("id, severity, status"),
+      supabase.from("qa_runs").select("id, status, started_at, branch, projects(name)").order("started_at", { ascending: false }).limit(5),
     ]);
 
     const runs = runsAll.data ?? [];
@@ -29,7 +30,6 @@ export const getDashboardStats = createServerFn({ method: "GET" })
     const p0 = open.filter(f => f.severity === "critical").length;
     const p1 = open.filter(f => f.severity === "high").length;
 
-
     return {
       runsToday: today.length,
       passRate,
@@ -37,5 +37,6 @@ export const getDashboardStats = createServerFn({ method: "GET" })
       openFindings: open.length,
       mttrSeconds: mttr,
       totalRuns: runs.length,
+      recent: recent.data ?? [],
     };
   });
