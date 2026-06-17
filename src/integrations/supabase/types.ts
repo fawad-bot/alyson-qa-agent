@@ -14,6 +14,111 @@ export type Database = {
   }
   public: {
     Tables: {
+      alerts: {
+        Row: {
+          body: string | null
+          channel: string
+          created_at: string
+          finding_id: string | null
+          id: string
+          owner_id: string
+          read_at: string | null
+          run_id: string | null
+          severity: string
+          title: string
+        }
+        Insert: {
+          body?: string | null
+          channel?: string
+          created_at?: string
+          finding_id?: string | null
+          id?: string
+          owner_id: string
+          read_at?: string | null
+          run_id?: string | null
+          severity: string
+          title: string
+        }
+        Update: {
+          body?: string | null
+          channel?: string
+          created_at?: string
+          finding_id?: string | null
+          id?: string
+          owner_id?: string
+          read_at?: string | null
+          run_id?: string | null
+          severity?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "alerts_finding_id_fkey"
+            columns: ["finding_id"]
+            isOneToOne: false
+            referencedRelation: "findings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "alerts_run_id_fkey"
+            columns: ["run_id"]
+            isOneToOne: false
+            referencedRelation: "qa_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      evidence_items: {
+        Row: {
+          created_at: string
+          finding_id: string | null
+          id: string
+          kind: string
+          owner_id: string
+          payload: Json
+          run_id: string | null
+          title: string
+          url: string | null
+        }
+        Insert: {
+          created_at?: string
+          finding_id?: string | null
+          id?: string
+          kind: string
+          owner_id: string
+          payload?: Json
+          run_id?: string | null
+          title: string
+          url?: string | null
+        }
+        Update: {
+          created_at?: string
+          finding_id?: string | null
+          id?: string
+          kind?: string
+          owner_id?: string
+          payload?: Json
+          run_id?: string | null
+          title?: string
+          url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "evidence_items_finding_id_fkey"
+            columns: ["finding_id"]
+            isOneToOne: false
+            referencedRelation: "findings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "evidence_items_run_id_fkey"
+            columns: ["run_id"]
+            isOneToOne: false
+            referencedRelation: "qa_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       findings: {
         Row: {
           created_at: string
@@ -184,6 +289,48 @@ export type Database = {
           },
         ]
       }
+      quality_gates: {
+        Row: {
+          created_at: string
+          description: string | null
+          enabled: boolean
+          id: string
+          metric: string
+          name: string
+          operator: string
+          owner_id: string
+          severity: string
+          threshold: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          enabled?: boolean
+          id?: string
+          metric: string
+          name: string
+          operator: string
+          owner_id: string
+          severity?: string
+          threshold: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          enabled?: boolean
+          id?: string
+          metric?: string
+          name?: string
+          operator?: string
+          owner_id?: string
+          severity?: string
+          threshold?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       run_gates: {
         Row: {
           created_at: string
@@ -230,6 +377,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      test_suites: {
+        Row: {
+          checks: Json
+          created_at: string
+          description: string | null
+          enabled: boolean
+          id: string
+          name: string
+          owner_id: string
+          tags: string[]
+          updated_at: string
+        }
+        Insert: {
+          checks?: Json
+          created_at?: string
+          description?: string | null
+          enabled?: boolean
+          id?: string
+          name: string
+          owner_id: string
+          tags?: string[]
+          updated_at?: string
+        }
+        Update: {
+          checks?: Json
+          created_at?: string
+          description?: string | null
+          enabled?: boolean
+          id?: string
+          name?: string
+          owner_id?: string
+          tags?: string[]
+          updated_at?: string
+        }
+        Relationships: []
       }
       user_roles: {
         Row: {
