@@ -70,14 +70,14 @@ function RunDetail() {
       </div>
 
       <Tabs defaultValue="summary">
-        <TabsList className="bg-canvas border border-border">
-          <TabsTrigger value="summary">Summary</TabsTrigger>
-          <TabsTrigger value="pipeline">Pipeline</TabsTrigger>
-          <TabsTrigger value="findings">Findings ({data.findings.length})</TabsTrigger>
-          <TabsTrigger value="evidence">Evidence ({data.evidence.length})</TabsTrigger>
-          <TabsTrigger value="alerts">Alerts ({data.alerts.length})</TabsTrigger>
-          <TabsTrigger value="logs">Logs</TabsTrigger>
-          <TabsTrigger value="settings">Settings</TabsTrigger>
+        <TabsList className="bg-canvas border border-border" data-testid="run-tabs">
+          <TabsTrigger value="summary" data-testid="run-tab-summary">Summary</TabsTrigger>
+          <TabsTrigger value="pipeline" data-testid="run-tab-pipeline">Pipeline</TabsTrigger>
+          <TabsTrigger value="findings" data-testid="run-tab-findings">Findings ({data.findings.length})</TabsTrigger>
+          <TabsTrigger value="evidence" data-testid="run-tab-evidence">Evidence ({data.evidence.length})</TabsTrigger>
+          <TabsTrigger value="alerts" data-testid="run-tab-alerts">Alerts ({data.alerts.length})</TabsTrigger>
+          <TabsTrigger value="logs" data-testid="run-tab-logs">Logs</TabsTrigger>
+          <TabsTrigger value="settings" data-testid="run-tab-settings">Settings</TabsTrigger>
         </TabsList>
 
         <TabsContent value="summary" className="mt-4">
